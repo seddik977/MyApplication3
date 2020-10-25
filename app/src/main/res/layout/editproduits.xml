@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tool"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+
+
+            />
+
+
+
+
+        <EditText
+            android:id="@+id/searchFilter1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/tool"
+            android:drawableRight="@drawable/search"
+
+            android:layout_marginRight="50dp"
+
+            android:hint="Recherche produit" />
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recycler"
+
+           >
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/searchFilter1"
+            android:id="@+id/recycler1"/>
+
+
+
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+
+        >
+        <TextView
+            android:id="@+id/pvente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+
+            android:text=""
+            android:textSize="20sp"
+            tools:ignore="VectorDrawableCompat"
+
+            />
+        <TextView
+            android:id="@+id/totalq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:text=""
+            android:textSize="20sp"
+            tools:ignore="VectorDrawableCompat"
+
+            />
+
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/ajout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="40px"
+        app:srcCompat="@drawable/save"
+        tools:ignore="VectorDrawableCompat"
+        />
+    <ImageButton
+        android:id="@+id/codebar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/tool"
+
+        android:layout_gravity="end"
+android:layout_marginTop="?attr/actionBarSize"
+        android:src="@drawable/codeb"
+
+
+        android:text=""
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

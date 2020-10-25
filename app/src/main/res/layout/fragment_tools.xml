@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+
+
+
+    <View
+        android:id="@+id/fabii"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="50px"
+        app:srcCompat="@drawable/start"
+        tools:ignore="VectorDrawableCompat"
+        />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <Button
+        android:id="@+id/datex"
+
+
+        android:layout_marginTop="8dp"
+
+
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:text="Choisir une date"
+
+        />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/searchFilter"
+            android:hint="Recherche par point de vente"
+            android:drawableRight="@drawable/search"
+
+            android:layout_below="@+id/datex"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/searchFilter"
+        android:layout_marginBottom="?android:attr/actionBarSize"/>
+    </RelativeLayout>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+
+
+        app:layout_anchor="@+id/fabii"
+        app:layout_anchorGravity="bottom|center">
+        <TextView
+            android:id="@+id/totalP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+
+            android:text=""
+            android:textSize="20sp"
+            tools:ignore="VectorDrawableCompat"
+
+            />
+        <TextView
+            android:id="@+id/totalQQ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+
+            android:text=""
+            android:textSize="20sp"
+            tools:ignore="VectorDrawableCompat"
+
+            />
+
+
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.casbaherpapp.myapplication">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <service
+            android:name=".ForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":trueF"></service>
+
+        <service
+            android:name=".GPS"
+            android:enabled="true"
+            android:exported="true" />
+
+
+        <activity
+            android:name=".MainActivity"
+            android:alwaysRetainTaskState="true"
+            android:windowSoftInputMode="adjustPan|adjustResize"
+
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.casbaherpapp.myapplication"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".mail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".liv"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".pv"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".produits"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".editventes"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".editproduits"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".editproduitss"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".editproduitsss"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".modpvente"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ajoutpvente"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".qr"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".notifications"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".intro"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".topclients"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".editventespro"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".imad.OrderProducts"
+            android:theme="@style/Custom.Material"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".imad.Entities.Historique"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden"/>
+    </application>
+
+</manifest>

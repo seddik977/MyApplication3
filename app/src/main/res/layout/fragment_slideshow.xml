@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+
+
+    <View
+        android:id="@+id/fabi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="50px"
+        app:srcCompat="@drawable/start"
+        tools:ignore="VectorDrawableCompat"
+        />
+
+    <RelativeLayout
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        tools:context="tabian.com.listview.MainActivity">
+
+
+
+        <EditText
+            android:id="@+id/searchFilter"
+            android:layout_width="match_parent"
+            android:drawableRight="@drawable/search"
+            android:hint="Recherche par produit"
+            android:layout_height="50dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="?android:attr/actionBarSize"
+            android:layout_below="@+id/searchFilter" />
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_anchor="@+id/fabi"
+        app:layout_anchorGravity="bottom|center">
+
+        <Button
+            android:id="@+id/produits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/radius_bg"
+            android:text="Tous les produits"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/commander_produits"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:drawableEnd="@drawable/ic_baseline_storefront_24"
+            android:text="Casbah Store"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_baseline_storefront_24"
+            app:iconGravity="end"
+            app:iconTint="@color/colorAccent"
+             />
+
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+
+            android:text=""
+            android:textSize="20sp"
+            tools:ignore="VectorDrawableCompat"
+
+            />
+
+        <TextView
+            android:id="@+id/totalQ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text=""
+            android:textSize="20sp"
+            tools:ignore="VectorDrawableCompat" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_messages"
+        app:actionLayout="@layout/badge_layout"
+        app:showAsAction="always"
+        android:title="TODO" />
+
+    <item
+        android:id="@+id/download"
+        android:orderInCategory="100"
+        android:title="Télécharger les données"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/sync"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/stop"
+        android:orderInCategory="100"
+        android:title="Mission terminée"
+        />
+
+    <item
+        android:id="@+id/importer"
+        android:orderInCategory="100"
+        android:title="Importer les clients (Excel)"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/dec"
+        android:orderInCategory="100"
+        android:title="Déconnexion"
+       />
+</menu>

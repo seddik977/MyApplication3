@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+
+
+
+    <View
+        android:id="@+id/fabi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="50px"
+        app:srcCompat="@drawable/start"
+        tools:ignore="VectorDrawableCompat"
+        />
+
+
+    <RelativeLayout
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="tabian.com.listview.MainActivity"
+        >
+        <Button
+            android:id="@+id/datex"
+
+
+            android:layout_marginTop="8dp"
+
+
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="16sp"
+          android:layout_alignParentLeft="true"
+            android:text="Choisir une date                        "
+
+            />
+        <Button
+            android:id="@+id/commune"
+
+
+            android:layout_marginTop="8dp"
+
+
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:textSize="10sp"
+
+            android:layout_toRightOf="@id/datex"
+            android:text="Par commune"
+            android:drawableRight="@drawable/appart"
+
+            />
+
+        <EditText
+            android:id="@+id/searchFilter"
+            android:drawableRight="@drawable/search"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Recherche par point de vente"
+            android:layout_below="@+id/datex"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/searchFilter"
+            android:layout_marginBottom="?android:attr/actionBarSize"/>
+    </RelativeLayout>
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+
+
+        app:layout_anchor="@+id/fabi"
+        app:layout_anchorGravity="bottom|center">
+        <TextView
+            android:id="@+id/value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+
+            android:text="0%"
+            android:textSize="20sp"
+
+
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_gravity="center|center"
+            android:layout_height="match_parent"
+
+android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            />
+
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

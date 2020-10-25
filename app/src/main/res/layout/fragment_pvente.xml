@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <View
+        android:id="@+id/fabi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="50px"
+        app:srcCompat="@drawable/start"
+        tools:ignore="VectorDrawableCompat"
+        />
+<ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        tools:ignore="MissingConstraints">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <EditText
+
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Par nom, id ou numero"
+        android:drawableRight="@drawable/search"
+android:layout_marginRight="50dp"
+        android:id="@+id/searchFilter"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/searchFilter"
+        android:id="@+id/recycler3"
+        android:layout_marginBottom="?android:attr/actionBarSize"
+        />
+
+
+
+
+
+
+
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+</ScrollView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@drawable/addd"
+        tools:ignore="VectorDrawableCompat"
+        android:layout_marginBottom="?android:attr/actionBarSize"
+        android:layout_marginRight="40px"
+
+        />
+
+    <ImageButton
+        android:id="@+id/qr"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/motiff"
+
+        android:layout_gravity="end"
+
+        android:layout_x="50px"
+        android:layout_y="52px"
+        android:src="@drawable/qr"
+        android:text=""
+        />
+
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+
+        app:layout_anchor="@+id/fabi"
+        app:layout_anchorGravity="bottom|center">
+
+
+
+        <Button
+            android:id="@+id/top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top clients"
+            android:textSize="12sp"
+            android:layout_gravity="right"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/totalQ"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text=""
+                android:textSize="15sp"
+                tools:ignore="VectorDrawableCompat"
+
+                />
+            <Button
+                android:id="@+id/premier"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:text="1"
+                android:textSize="10sp"
+                android:background="@drawable/shape"
+                android:layout_gravity="left"/>
+            <Button
+                android:id="@+id/left"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:text="-"
+                android:textSize="10sp"
+                android:background="@drawable/shape"
+                android:layout_gravity="left"/>
+            <EditText
+                android:id="@+id/center"
+                android:layout_width="35dp"
+                android:inputType="number"
+                android:background="#fff"
+                android:textAlignment="center"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:layout_gravity="left|center"
+                tools:ignore="RtlCompat">
+
+            </EditText>
+
+            <Button
+                android:id="@+id/right"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:text="+"
+                android:textSize="10sp"
+                android:background="@drawable/shape"
+                android:layout_gravity="right"/>
+
+            <Button
+                android:id="@+id/dernier"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:text="->"
+                android:background="@drawable/shape"
+                android:textSize="10sp"
+                android:layout_gravity="right"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

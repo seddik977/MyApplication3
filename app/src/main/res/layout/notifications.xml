@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+
+
+
+    <View
+        android:id="@+id/fabi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="50px"
+        app:srcCompat="@drawable/start"
+        tools:ignore="VectorDrawableCompat"
+        />
+
+
+    <RelativeLayout
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="tabian.com.listview.MainActivity"
+        >
+
+
+        <EditText
+            android:id="@+id/searchFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:hint="Recherche par point de vente"
+            android:drawableRight="@drawable/search"
+
+
+
+            />
+        <Button
+            android:id="@+id/commune"
+
+
+
+
+            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:textSize="8sp"
+            android:text=""
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeStepGranularity="2sp"
+            android:layout_toRightOf="@id/searchFilter"
+            android:drawableTop="@drawable/appart"
+
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/commune"
+            android:layout_marginBottom="?android:attr/actionBarSize"
+
+            />
+    </RelativeLayout>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar3"
+        android:layout_below="@+id/recycler3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        android:layout_gravity="bottom"
+
+        >
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/premier"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:text="1"
+                android:textSize="25sp"
+                android:background="@drawable/shape"
+                android:layout_gravity="left"/>
+            <Button
+                android:id="@+id/left"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:text="-"
+                android:textSize="25sp"
+                android:background="@drawable/shape"
+                android:layout_gravity="left"/>
+            <EditText
+                android:id="@+id/center"
+                android:layout_width="50dp"
+                android:inputType="number"
+                android:background="#fff"
+                android:textAlignment="center"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:layout_gravity="center">
+
+            </EditText>
+
+            <Button
+                android:id="@+id/right"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:text="+"
+                android:textSize="25sp"
+                android:background="@drawable/shape"
+                android:layout_gravity="right"/>
+
+            <Button
+                android:id="@+id/dernier"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:text="|>"
+                android:background="@drawable/shape"
+                android:textSize="25sp"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/home"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/liv"
+            android:title="@string/menu_gallery" />
+        <item
+            android:id="@+id/nav_gventes"
+            android:icon="@drawable/bus"
+            android:title="Gestion de ventes" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/store"
+            android:title="@string/menu_slideshow" />
+        <item
+            android:id="@+id/nav_pvente"
+            android:icon="@drawable/point"
+            android:title="Clients" />
+        <item
+            android:id="@+id/nav_tools"
+
+            android:icon="@drawable/mon"
+            android:title="Ventes" />
+
+        <item
+            android:id="@+id/nav_paiement"
+
+            android:icon="@drawable/ic_baseline_payments_24"
+            android:title="Paiement" />
+
+    </group>
+
+    <item android:title="Autres">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_info_outline_black_24dp"
+                android:title="Infos de vendeur" />
+            <item
+                android:id="@+id/nav_send"
+
+                android:icon="@drawable/info"
+                android:title="A Propos" />
+        </menu>
+    </item>
+
+</menu>

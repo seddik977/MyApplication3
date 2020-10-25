@@ -1,0 +1,20 @@
+<resources>
+
+    <string name="take_photo">Take Photo</string>
+    <string name="permission_text">This app needs access to your camera so that it can take pictures.</string>
+
+    <string name="app_name">Hand to Hand</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title"></string>
+    <string name="nav_header_subtitle"></string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Synchronisation</string>
+
+    <string name="menu_home">Accueil</string>
+    <string name="menu_gallery">Livraisons et commandes</string>
+    <string name="menu_slideshow">Magasin de voiture</string>
+    <string name="menu_tools">Ventes</string>
+    <string name="menu_share">Infos</string>
+    <string name="menu_send">A Propos</string>
+</resources>
