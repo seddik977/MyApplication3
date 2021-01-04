@@ -2,6 +2,7 @@ package com.casbaherpapp.myapplication;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -53,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -80,7 +82,7 @@ public class modpvente extends AppCompatActivity {
 
     private BDD bd;
     private int id = -1, yaw = 0, idp, idpv = -1, posp, pospv, s = 0, id_livraison, bon, idselect;
-    private String pvente = "",typ;
+    private String pvente = "",typ,selection;
     private FloatingActionButton f;
 
     private FusedLocationProviderClient fusedLocationClient;
@@ -113,8 +115,39 @@ public class modpvente extends AppCompatActivity {
                         R.layout.dropdown_menu_popup_item,
                         COUNTRIES);
 
-        AutoCompleteTextView editTextFilledExposedDropdown = findViewById(R.id.wilaya);
+        final AutoCompleteTextView editTextFilledExposedDropdown = findViewById(R.id.wilaya);
         editTextFilledExposedDropdown.setAdapter(adapter);
+        editTextFilledExposedDropdown.setValidator(new AutoCompleteTextView.Validator() {
+            @Override
+            public boolean isValid (CharSequence text){
+                //some logic here returns true or false based on if the text is validated
+                AutoCompleteTextView drop = findViewById(R.id.wilaya);
+                ArrayAdapter<String> adapter= (ArrayAdapter<String>) drop.getAdapter();
+
+                String[] items = new String[COUNTRIES.length];
+                for(int i=0 ; i<COUNTRIES.length ; i++){
+                    items[i]= COUNTRIES[i];
+                }
+
+                Arrays.sort(items);
+
+
+                if (Arrays.binarySearch(items, text.toString()) > 0)
+                    return true;
+                else
+                    return false;
+            }
+
+            @Override
+            public CharSequence fixText (CharSequence invalidText){
+                //If .isValid() returns false then the code comes here
+                //do whatever way you want to fix in the users input and  return it
+                return "";
+            }
+        });
+
+
+
         supprimer = findViewById(R.id.supprimer);
         modifier = findViewById(R.id.modifier);
         appel = findViewById(R.id.appel);
@@ -230,6 +263,9 @@ while(c.moveToNext()){
     z.setText( c.getString(c.getColumnIndex("zone")));
     w.setText(c.getString(c.getColumnIndex("wilaya")));
 
+
+   selection = c.getString(c.getColumnIndex("wilaya"));
+
     if (c.getString(c.getColumnIndex("type")) != "" && c.getString(c.getColumnIndex("type"))  != null) {
         int typ = 5;
 
@@ -265,6 +301,9 @@ bd.close();
 
 
 
+
+
+
         Onclick();
 
 
@@ -273,7 +312,7 @@ bd.close();
         editTextFilledExposedDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String) parent.getItemAtPosition(position);
+                String selection = (String) editTextFilledExposedDropdown.getText().toString();
                 int pos = -1;
 
                 for (int i = 0; i < COUNTRIES.length; i++) {
@@ -306,7 +345,89 @@ bd.close();
             }
         });
 
-sp();
+        communeTV.setValidator(new AutoCompleteTextView.Validator() {
+            @Override
+            public boolean isValid (CharSequence text){
+                //some logic here returns true or false based on if the text is validated
+
+                ArrayAdapter<String> communeAdapter= (ArrayAdapter<String>) communeTV.getAdapter();
+                if(communeAdapter!=null){
+                    String selection = (String) editTextFilledExposedDropdown.getText().toString();
+                    int pos = -1;
+
+                    for (int i = 0; i < COUNTRIES.length; i++) {
+                        if (COUNTRIES[i].equals(selection)) {
+                            pos = i;
+                            break;
+                        }
+                    }
+                    List<String> communes = new ArrayList<String>();
+                    try {
+                        JSONArray communesJsonArray = new JSONArray(loadJSONFromAsset("communes.json"));
+                        for(int i=0;i<communesJsonArray.length();i++) {
+                            JSONObject communesJsonAray = communesJsonArray.getJSONObject(i);
+                            if (communesJsonAray.getString("wilaya_id").equals(String.valueOf(pos+ 1))) {
+                                String nom = communesJsonAray.getString("nom");
+                                communes.add(nom);
+                            }
+
+
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String[] items = new String[communes.size()];
+                    for(int i=0 ; i<communes.size() ; i++){
+                        items[i]= communes.get(i);
+                    }
+                    Arrays.sort(items);
+
+                    if (Arrays.binarySearch(items, text.toString()) > 0)
+                        return true;
+                    else
+                        return false;}
+                return true;
+            }
+
+            @Override
+            public CharSequence fixText (CharSequence invalidText){
+                //If .isValid() returns false then the code comes here
+                //do whatever way you want to fix in the users input and  return it
+                return "";
+            }
+        });
+
+
+        int pos = -1;
+
+        for (int j = 0; j < COUNTRIES.length; j++) {
+            if (COUNTRIES[j].equals(selection)) {
+                pos = j;
+                break;
+            }
+        }
+        List<String> communes = new ArrayList<String>();
+        try {
+            JSONArray communesJsonArray = new JSONArray(loadJSONFromAsset("communes.json"));
+            for(int k=0;k<communesJsonArray.length();k++) {
+                JSONObject communesJsonAray = communesJsonArray.getJSONObject(k);
+                if (communesJsonAray.getString("wilaya_id").equals(String.valueOf(pos+ 1))) {
+                    String nommm = communesJsonAray.getString("nom");
+                    communes.add(nommm);
+                }
+
+
+            }
+
+
+        } catch (JSONException ee) {
+            ee.printStackTrace();
+        }
+        communeAdapter = new ArrayAdapter<>(modpvente.this,R.layout.list_item,communes);
+        communeTV.setAdapter(communeAdapter);
+        sp();
     }
 
     public String loadJSONFromAsset(String fileName) {
@@ -460,12 +581,14 @@ sp();
                     }
                 });
 
-
         modifier.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         TextInputEditText typp=findViewById(R.id.typee);
+                       modifier.setFocusableInTouchMode(true);
+                        modifier.requestFocus();
+                        modifier.setFocusableInTouchMode(false);
                         typ=P.getSelectedItem().toString();
                         if(P.getSelectedItemPosition()==5)
                             typ=typp.getText().toString();

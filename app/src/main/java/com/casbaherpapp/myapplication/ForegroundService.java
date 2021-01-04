@@ -1,7 +1,5 @@
 package com.casbaherpapp.myapplication;
 
-
-
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
@@ -46,11 +44,13 @@ import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -60,15 +60,13 @@ import java.util.concurrent.TimeUnit;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static java.security.AccessController.getContext;
-
-
 public class ForegroundService extends Service {
     public int id=2;
 
     private static final String DATA_INSERT_URL="http://www.casbahdz.com/CRUD.php";
     private Thread mThread;
     ScheduledExecutorService worker;
-    private static final int SYNC_TIME =60* 1000;
+    private static final int SYNC_TIME = 1000*30;
 
     @Override
     public int onStartCommand(Intent data, int startId, int flags) {
@@ -234,12 +232,12 @@ public class ForegroundService extends Service {
                             .setPriority(Priority.MEDIUM)
                             .build()
                             .getAsJSONArray(new JSONArrayRequestListener() {
-
-
                                 @Override
                                 public void onResponse(JSONArray response) {
-                                            Log.e("not", String.valueOf(response.length()));
+                                    Log.d("count", String.valueOf(response.length()));
                                             if(response.length()!=0) {
+
+
                                                 for (int i = 0; i < response.length(); i++) {
 
                                                     try {
@@ -275,7 +273,7 @@ public class ForegroundService extends Service {
 
                                 @Override
                                 public void onError(ANError anError) {
-
+                                 Log.d("error",anError.getMessage());
                                 }
                             });
 
@@ -300,6 +298,7 @@ public class ForegroundService extends Service {
     }
 
     public void notifyVersement(String title, String message, String date, int id) {
+        Log.d("here","here");
         Intent intent = new Intent(this, Historique.class);
         intent.putExtra("holla",date);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);

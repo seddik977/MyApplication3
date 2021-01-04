@@ -11,9 +11,10 @@ public class VersementItem {
     private double noveauCredit;
     private double dernierVersement;
     private double versementTotal;
+    private int valideState;
     public VersementItem(){}
 
-    public VersementItem(int id, String comptableFirstName, String comptableLastName, String action, String createdDate, String updatedDate, double ancientCredit, double noveauCredit, double dernierVersement, double versementTotal) {
+    public VersementItem(int id, String comptableFirstName, String comptableLastName, String action, String createdDate, String updatedDate, double ancientCredit, double noveauCredit, double dernierVersement, double versementTotal,int valideState) {
         this.id = id;
         this.comptableFirstName = comptableFirstName;
         this.comptableLastName = comptableLastName;
@@ -24,6 +25,7 @@ public class VersementItem {
         this.noveauCredit = noveauCredit;
         this.dernierVersement = dernierVersement;
         this.versementTotal = versementTotal;
+        this.valideState=valideState;
     }
 
     public int getId() {
@@ -104,5 +106,13 @@ public class VersementItem {
 
     public void setVersementTotal(double versementTotal) {
         this.versementTotal = versementTotal;
+    }
+
+    public int getValideState() {
+        return valideState;
+    }
+
+    public void setValideState(int valideState) {
+        this.valideState = valideState;
     }
 }

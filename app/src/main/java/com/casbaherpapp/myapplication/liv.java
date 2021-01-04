@@ -163,7 +163,7 @@ public class liv extends AppCompatActivity {
         ID = findViewById(R.id.editText4);
         PAY = findViewById(R.id.payement);
 
-        M = findViewById(R.id.editText3);
+        M = findViewById(R.id.editText3);  //prix vendu
         V = findViewById(R.id.valeur);
         reste = findViewById(R.id.reste);
 
@@ -1481,23 +1481,19 @@ else{
 if(getDistance()<=Integer.parseInt(bd.getdistance()))  {
                    bd.close();
 
-    qvv.set(position, String.valueOf(QV.getText()));
-                            quvv.set(position, String.valueOf(QVU.getText()));
-                            payy.set(position, String.valueOf(M.getText()));
-                            endd.set(position, String.valueOf(endomage.getText()));
+                            qvv.set(position, String.valueOf(QV.getText())); //inserer quantity vendu fadeaux
+                            quvv.set(position, String.valueOf(QVU.getText())); //inserer quantity vendu unites
+                            payy.set(position, String.valueOf(M.getText())); //inserer prix vendu dans array
+                            endd.set(position, String.valueOf(endomage.getText())); //inserer produit endomage
                             if (!s.isChecked()) {
 
-                                final int quantite_v = Integer.parseInt(String.valueOf(QV.getText()));
-                                final int quantite_v_u = Integer.parseInt(String.valueOf(QVU.getText()));
-
-                                final double payement = Double.parseDouble(String.valueOf(M.getText()));
 
                                 if (endomage.getText().equals("")) {
                                     ss = "0";
                                 } else {
                                     ss = String.valueOf(endomage.getText());
                                 }
-
+                               //M = prix vendu de produit
                                 if (String.valueOf(M.getText()) == null || String.valueOf(QV.getText()) == null) {
                                     Toast.makeText(getApplicationContext(), "Quantité à vendre où payement non valide", Toast.LENGTH_SHORT).show();
                                     progress.dismiss();
@@ -1510,8 +1506,6 @@ if(getDistance()<=Integer.parseInt(bd.getdistance()))  {
                                     if (user.equals("non")) {
                                         for (int i = 0; i < idp.size(); i++) {
                                             int u = (Integer.parseInt(qvv.get(i)) * Integer.parseInt(pu.get(i))) + Integer.parseInt(quvv.get(i));
-
-
 
 
                                             final String finalSs = ss;

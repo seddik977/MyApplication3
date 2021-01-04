@@ -32,7 +32,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="0 DA"
-            android:textColor="@color/black"
+            android:textColor="#f44336"
             android:textSize="24sp"
             android:textStyle="bold"></TextView>
 

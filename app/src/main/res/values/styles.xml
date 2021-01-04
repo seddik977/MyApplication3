@@ -76,5 +76,13 @@
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@android:color/holo_green_dark</item>
     </style>
-
+    <style name="DialogWTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:background">@color/color_transparent</item>
+        <item name="backgroundTint">@color/color_transparent</item>
+        <item  name="colorSurface">@color/color_transparent</item>
+        <item name="colorOnSurface">@color/color_transparent</item>
+        <item name="background">@color/color_transparent</item>
+        <item name="android:tint">@color/color_transparent</item>
+        <item name="android:windowBackground">@color/color_transparent</item>
+    </style>
   </resources>

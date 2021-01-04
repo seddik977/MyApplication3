@@ -1,5 +1,6 @@
 package com.casbaherpapp.myapplication.imad.Entities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,8 @@ import com.casbaherpapp.myapplication.Main;
 import com.casbaherpapp.myapplication.R;
 import com.casbaherpapp.myapplication.imad.Adapters.HistoriqueVersementAdapter;
 import com.casbaherpapp.myapplication.imad.Adapters.HistoryAdapter;
+import com.casbaherpapp.myapplication.imad.Listerners.ClickListener;
+import com.casbaherpapp.myapplication.imad.Listerners.ProgressLoaderListener;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONArray;
@@ -34,13 +37,12 @@ private ArrayList<VersementItem> versementItems;
 private MaterialToolbar toolbar;
     private BDD dataBase;
     private  int id;
+    private ProgressDialog  progressDialog;
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.historique_ayout);
+        progressDialog = new ProgressDialog(Historique.this);
+        progressDialog.setCancelable(false);
         dataBase=new BDD(Historique.this);
         dataBase.open();
         id = dataBase.getID();
@@ -54,9 +56,6 @@ private MaterialToolbar toolbar;
             }
         });
 
-
-
-
         historiqueVersementRecyclerView= (RecyclerView)findViewById(R.id.historiqueVersementRecyclerView);
         historiqueVersementRecyclerView.hasFixedSize();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -66,7 +65,17 @@ private MaterialToolbar toolbar;
         historiqueVersementRecyclerView.addItemDecoration(dividerItemDecoration);
         historiqueVersementRecyclerView.setLayoutManager(layoutManager);
         versementItems = new ArrayList<VersementItem>();
-        historiqueVersementAdapter = new HistoriqueVersementAdapter(getApplicationContext(),getSupportFragmentManager(),versementItems);
+        historiqueVersementAdapter = new HistoriqueVersementAdapter(getApplicationContext(), getSupportFragmentManager(), versementItems,id, new ProgressLoaderListener() {
+            @Override
+            public void showProgress() {
+               progressDialog.show();
+            }
+
+            @Override
+            public void closeProgress() {
+             progressDialog.dismiss();
+            }
+        });
         historiqueVersementRecyclerView.setAdapter(historiqueVersementAdapter);
 
         AndroidNetworking.post("http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php")
@@ -80,8 +89,8 @@ private MaterialToolbar toolbar;
                     @Override
                     public void onResponse(JSONArray response) {
 
-
-                            for(int i=0;i<response.length();i++){
+                               Log.e("message", String.valueOf(response.length()));
+                    for(int i=0;i<response.length();i++){
 
                                 try {
                                     VersementItem versementItem = new VersementItem();
@@ -95,7 +104,7 @@ private MaterialToolbar toolbar;
                                     double noveauCredit=response.getJSONObject(i).getDouble("credit_noveau");
                                     double dernierVersement=response.getJSONObject(i).getDouble("versement");
                                     double versementTotal=response.getJSONObject(i).getDouble("versement_total");
-
+                                    int valideState=response.getJSONObject(i).getInt("payment_flag");
                                     versementItem.setId(id);
                                     versementItem.setComptableFirstName(comptableFirstName);
                                     versementItem.setComptableLastName(comptableLastName);
@@ -106,7 +115,7 @@ private MaterialToolbar toolbar;
                                     versementItem.setAncientCredit(ancientCredit);
                                     versementItem.setDernierVersement(dernierVersement);
                                     versementItem.setVersementTotal(versementTotal);
-
+                                    versementItem.setValideState(valideState);
                                     historiqueVersementAdapter.getVersementItems().add(versementItem);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -125,7 +134,7 @@ private MaterialToolbar toolbar;
 
                     @Override
                     public void onError(ANError anError) {
-
+                         Log.e("message",anError.getMessage());
                     }
                 });
 

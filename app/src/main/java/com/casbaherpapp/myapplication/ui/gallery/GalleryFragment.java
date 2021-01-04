@@ -319,9 +319,6 @@ if(tab==3){
                                     payement[i] = response.getJSONObject(i).getString("payement");
                                     reste[i] = response.getJSONObject(i).getString("reste");
 
-
-                                    String date_m =response.getJSONObject(i).getString("date_m");
-
                                     // bd.InsertLiv(id,id_l[i],pvente[i],produit[i],quantite[i],quantite_u[i],montant_bon[i],heure[i],faite[i],endomage[i],payement[i],motif[i],QV[i],QVU[i],date[i],valide[i],date_m);
                                     final int l=i;
                                     AndroidNetworking.post(DATA_INSERT_URL)
@@ -1463,7 +1460,8 @@ public void Onclick(){
             });
 
 
-    mRecyclerView.addOnItemTouchListener(            new RecyclerItemClickListener(con, new RecyclerItemClickListener.OnItemClickListener() {
+    mRecyclerView.addOnItemTouchListener(
+            new RecyclerItemClickListener(con, new RecyclerItemClickListener.OnItemClickListener() {
         public void onItemClick(View v, int position){
 
          if(C==0){

@@ -232,6 +232,7 @@ private int x=0,k=0, id=-1,cpt=0,cptp=0,cptliv=0,cptstock=0,countp=0,countliv=0,
                     "user" + " TEXT not null , " +
                     "connecte" + " TEXT  default 'oui', " +
                     "branche" + " TEXT , " +
+                    "role" + " TEXT , " +
                     "password" + " INTEGER NOT NULL );"
             );
             db.execSQL("CREATE TABLE stockm\n" +
@@ -309,6 +310,7 @@ private int x=0,k=0, id=-1,cpt=0,cptp=0,cptliv=0,cptstock=0,countp=0,countliv=0,
             cv.put("user", "");
             cv.put("password", 0);
             cv.put("branche", "c");
+            cv.put("role", "r");
 
 
             db.insertWithOnConflict("login", null, cv, SQLiteDatabase.CONFLICT_IGNORE);
@@ -471,6 +473,12 @@ private int x=0,k=0, id=-1,cpt=0,cptp=0,cptliv=0,cptstock=0,countp=0,countliv=0,
 
         return c;
     }
+    public Cursor getAllpventes(){
+        Cursor c =ourDatabase.rawQuery("select * from pvente where longg!='' and lat!='' ",null);
+
+
+        return c;
+    }
     public Cursor getProductsFamillyName(){
         Cursor c =ourDatabase.rawQuery("SELECT DISTINCT p.famille from product as p",null);
 
@@ -550,6 +558,7 @@ private int x=0,k=0, id=-1,cpt=0,cptp=0,cptliv=0,cptstock=0,countp=0,countliv=0,
                 "user" + " TEXT not null , " +
                 "connecte" + " TEXT  default 'oui', " +
                 "branche" + " TEXT  , " +
+                "role" + " TEXT  , " +
                 "password" + " INTEGER NOT NULL );"
         );
 
@@ -663,7 +672,7 @@ public void dec(){
 
     }
 
-    public long Insert(int id, String user, String mdp,String b) {
+    public long Insert(int id, String user, String mdp,String b,String role) {
         // TODO Auto-generated method stub
         ContentValues cv = new ContentValues();
         cv.put("id", id);
@@ -671,7 +680,7 @@ public void dec(){
         cv.put("password", mdp);
         cv.put("branche",b );
         cv.put("connecte", "oui");
-
+        cv.put("role", role);
 
         return ourDatabase.update("login", cv,null,null );
 
@@ -2080,6 +2089,20 @@ return 0;
         while (c.moveToNext()){
 
             String data = c.getString(c.getColumnIndex("user"));
+
+            return data;
+        }
+        if(c!= null)
+            c.close();
+        return "";
+
+    }
+    public String getrole(){
+        Cursor c =ourDatabase.rawQuery("select role from login  where connecte='oui'",null);
+        while (c.moveToNext()){
+
+            String data = String.valueOf(c.getString(c.getColumnIndex("role")));
+
 
             return data;
         }

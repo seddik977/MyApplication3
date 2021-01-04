@@ -2,17 +2,18 @@ package com.casbaherpapp.myapplication;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
+import com.casbaherpapp.myapplication.imad.OrderProductsDistributeur;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import androidx.core.app.ActivityCompat;
@@ -24,6 +25,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputLayout;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -33,7 +35,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,26 +50,30 @@ import android.content.pm.PackageManager;
 import androidx.core.content.ContextCompat;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements  View.OnClickListener{
 
     private AppBarConfiguration mAppBarConfiguration;
     private static final String DATA_INSERT_URL="http://www.casbahdz.com/CRUD.php";
+
     private static final int PERMISSIONS_REQUEST = 100;
     private static final int CAMERA_REQUEST_CODE = 1450;
     private static final int CAMERA_PERMISSION_CODE = 1460;
 
     private String mCurrentPhotoPath,b;
-    private EditText u,mail;
+
     private TextView mdp;
-    private EditText p;
-    private Button login,send_p;
+
+    private TextInputLayout userNameTextInputLayout;
+    private TextInputLayout passWordTextInputLayout;
+    private Button login;
     private int id=-1,v=1;
     private String pass="",user="";
     public ProgressDialog progress ;
     private BDD bd;
     private Intent intent;
     private static int c=0;
-
+    private RadioGroup roleRadioGroup;
+    private  String role;
 
 
     @Override
@@ -104,7 +111,12 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.login);
         //REFERENCE VIEWS
-        this.initializeViews();
+        userNameTextInputLayout = (TextInputLayout) findViewById(R.id.usernameTIL);
+        passWordTextInputLayout=(TextInputLayout) findViewById(R.id.passwordTIL);
+        mdp=  (TextView) findViewById(R.id.textmdp);
+
+        login= (Button) findViewById(R.id.login);
+
         progress = new ProgressDialog(this);
         progress.setTitle("Chargement");
         progress.setMessage("Attendez SVP...");
@@ -114,15 +126,27 @@ public class MainActivity extends AppCompatActivity {
         // disable dismiss by tapping outside of the dialog
 
         //HANDLE EVENTS
-        this.handleClickEvents();
-        verif();
-        p.setText(pass);
-        u.setText(user);
-        if(!pass.equals("")){
-            p.requestFocus();
-            p.setSelection(pass.length());}
+        login.setOnClickListener(this);
+        mdp.setOnClickListener(this);
 
+        verifierLoggedIn();
+//        p.setText(pass);
+//        u.setText(user);
+//        if(!pass.equals("")){
+//            p.requestFocus();
+//            p.setSelection(pass.length());}
+        roleRadioGroup = (RadioGroup)findViewById(R.id.roleRadioGroup);
+        role =
+                ((RadioButton)findViewById(roleRadioGroup.getCheckedRadioButtonId()))
+                        .getText().toString();
+        roleRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                 role =
+                        ((RadioButton)findViewById(roleRadioGroup.getCheckedRadioButtonId()))
+                                .getText().toString();
 
+            }
+        });
     }
 
 
@@ -140,66 +164,7 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-    private void initializeViews() {
 
-        u= (EditText) findViewById(R.id.user);
-        mdp=  (TextView) findViewById(R.id.textmdp);
-
-
-        p= (EditText) findViewById(R.id.password);
-
-
-
-        login= (Button) findViewById(R.id.login);
-
-
-
-    }
-
-    /*
-    HANDLE CLICK EVENTS
-     */
-    private void handleClickEvents() {
-        //EVENTS : ADD
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                progress.show();
-                login.setClickable(false);
-                //GET VALUES
-
-                String user=u.getText().toString();
-                String password =p.getText().toString();
-
-                //BASIC CLIENT SIDE VALIDATION
-                if((user.length()<1 || password.length()<1  ))
-                {
-                    login.setClickable(true);
-                    progress.dismiss();
-                    Toast.makeText(MainActivity.this, "Remplissez tous les champs SVP;", Toast.LENGTH_SHORT).show();
-
-                }
-                else{
-                    login();
-
-
-
-                }
-
-            }
-        });
-        mdp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent myIntent = new Intent(MainActivity.this, mail.class);
-                startActivity(myIntent);
-
-            }
-        });
-
-    }
 
 
     private void main(){
@@ -266,18 +231,28 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-    public void verif(){
+    public void verifierLoggedIn(){
         bd.open();
 
         id=bd.getID();
         user=bd.getuser();
         pass=bd.getpassword();
+        role=bd.getrole();
+
         b=bd.getb();
 
+        Log.e("role",bd.getrole()+user+pass+b);
 
 
         if(!user.equals("") && !pass.equals("0")){
-          GPStask();   }
+          if(role.equals("Livreur")){
+              GPStask();
+          }else{
+              RedirectDistributeur(id,b, role);
+          }
+
+
+        }
         else{
 
             user=bd.getuserR();
@@ -289,11 +264,77 @@ public class MainActivity extends AppCompatActivity {
         }
         bd.close();
     }
+public void loginDistributeur(){
+    final String pass = String.valueOf(passWordTextInputLayout.getEditText().getText().toString().trim());
+    String s=String.valueOf(userNameTextInputLayout.getEditText().getText().toString().trim()).toLowerCase();
+    final String user = s.replaceAll("\\s+","");
+    if(user==null || pass==null)
+    {
+        Toast.makeText(MainActivity.this, "Remplissez tous les champs SVP", Toast.LENGTH_SHORT).show();
+    }
+    else
+    {
 
 
-    public void login() {
-        final String pass = String.valueOf(p.getText());
-        String s=String.valueOf(u.getText()).toLowerCase();
+        AndroidNetworking.post(DATA_INSERT_URL)
+                .addBodyParameter("action","login dist")
+                .addBodyParameter("user",user)
+                .addBodyParameter("password",pass)
+                .setTag("test")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        if(response != null)
+                            try {
+                                login.setClickable(true);
+                                progress.dismiss();
+                                //SHOW RESPONSE FROM SERVER
+                                id=response.getJSONObject(0).getInt("id");
+                                b=response.getJSONObject(0).getString("branche");
+                                Toast.makeText(getBaseContext(), id+"==="+b, Toast.LENGTH_SHORT).show();
+                                bd.open();
+
+                                bd.Insert(id,user,pass,b, role);
+
+                                bd.close();
+
+
+                                // String responseString= response.get(0).toString();
+RedirectDistributeur(id,b, role);
+
+                            } catch (JSONException e) {
+
+                                login.setClickable(true);
+                                progress.dismiss();
+                                e.printStackTrace();
+                                Toast.makeText(MainActivity.this, "Nom d'utilisateur où le mot de passe sont incorrectes ", Toast.LENGTH_SHORT).show();
+                            }
+
+                    }
+
+                    //ERROR
+                    @Override
+                    public void onError(ANError anError) {
+                       Log.e("error",anError.getMessage());
+                        login.setClickable(true);
+                        progress.dismiss();
+                        Toast.makeText(MainActivity.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+
+                    }
+
+
+                });
+
+    }
+
+}
+
+    public void loginLivreur() {
+        final String pass = String.valueOf(passWordTextInputLayout.getEditText().getText().toString().trim());
+        String s=String.valueOf(userNameTextInputLayout.getEditText().getText().toString().trim()).toLowerCase();
         final String user = s.replaceAll("\\s+","");
         if(user==null || pass==null)
         {
@@ -321,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                                     b=response.getJSONObject(0).getString("branche");
                                     bd.open();
 
-                                    bd.Insert(id,user,pass,b);
+                                    bd.Insert(id,user,pass,b,role);
 
                                     bd.close();
                                     GPStask();
@@ -424,6 +465,7 @@ public class MainActivity extends AppCompatActivity {
         myIntent.putExtra("id", id+"");
 
         myIntent.putExtra("branche", b+"");
+        myIntent.putExtra("role", role +"");
 
         myIntent.putExtra(Intent.EXTRA_INTENT, intent);
 
@@ -432,9 +474,70 @@ public class MainActivity extends AppCompatActivity {
        finish();
 
     }
+private void RedirectDistributeur(int id,String branche,String role){
+
+    final Intent intentt = new Intent(this, ForegroundService.class);
+    intentt.putExtra("id", id+"");
+    startService(intentt);
+    Intent myIntent = new Intent(MainActivity.this, OrderProductsDistributeur.class);
+
+    myIntent.putExtra("id", id+"");
+
+    myIntent.putExtra("branche", b+"");
+    myIntent.putExtra("role", this.role +"");
+
+    myIntent.putExtra(Intent.EXTRA_INTENT, intent);
+
+
+    startActivity(myIntent);
+    finish();
+}
+
+    @Override
+    public void onClick(View v) {
+         switch (v.getId()){
+             case  R.id.login:
+
+                 progress.show();
+                 login.setClickable(false);
+
+                 String username = userNameTextInputLayout.getEditText().getText().toString().trim();
+                 String password  = passWordTextInputLayout.getEditText().getText().toString().trim();
+
+
+                 if((username.length()<1 || password.length()<1  ))
+                 {
+                     login.setClickable(true);
+                     progress.dismiss();
+                     Toast.makeText(MainActivity.this, "Remplissez tous les champs SVP;", Toast.LENGTH_SHORT).show();
+
+                 }
+                 else{
+
+                    if(role.equals("Livreur")){
+                        Toast.makeText(getBaseContext(),"this is livreur", Toast.LENGTH_SHORT).show();
+                        loginLivreur();
+                    }else if(role.equals("Distributeur")){
+
+                        loginDistributeur();
+                  Toast.makeText(getBaseContext(), "this is distributeur", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                 }
+
+                 break;
+             case R.id.textmdp:
+
+                 Intent myIntent = new Intent(MainActivity.this, mail.class);
+                 startActivity(myIntent);
+
+                 break;
+             default:
+                 break;
 
 
 
-
-
+         }
+    }
 }

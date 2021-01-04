@@ -1,6 +1,11 @@
 package com.casbaherpapp.myapplication.imad.Adapters;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.os.FileUtils;
+import android.os.RecoverySystem;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +14,30 @@ import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONArrayRequestListener;
+import com.androidnetworking.interfaces.StringRequestListener;
 import com.casbaherpapp.myapplication.R;
 import com.casbaherpapp.myapplication.imad.Dialog.DetailsVersementDialog;
 import com.casbaherpapp.myapplication.imad.Entities.VersementItem;
+import com.casbaherpapp.myapplication.imad.Listerners.ClickListener;
+import com.casbaherpapp.myapplication.imad.Listerners.ProgressLoaderListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.zip.Inflater;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,10 +47,15 @@ public class HistoriqueVersementAdapter extends RecyclerView.Adapter<HistoriqueV
     private Context context;
     private FragmentManager fm;
     private ArrayList<VersementItem> versementItems;
-    public HistoriqueVersementAdapter(Context context,FragmentManager fm,ArrayList<VersementItem> versementItems){
+    private int idLivreur;
+private ProgressLoaderListener progressLoaderListener;
+    public HistoriqueVersementAdapter(Context context, FragmentManager fm, ArrayList<VersementItem> versementItems,int idLivreur, ProgressLoaderListener progressLoaderListener){
         this.mInflater = LayoutInflater.from(context);
         this.versementItems = versementItems;
         this.fm=fm;
+        this.context = context;
+     this.progressLoaderListener = progressLoaderListener;
+     this.idLivreur = idLivreur;
     }
 
     @Override
@@ -56,18 +80,34 @@ public class HistoriqueVersementAdapter extends RecyclerView.Adapter<HistoriqueV
 
     @Override
     public void onBindViewHolder(@NonNull HistoriqueVersementAdapter.ViewHolder holder, int position) {
-
+        holder.idEvent = getVersementItems().get(position).getId();
+  holder.handshakeYes.setVisibility(View.GONE);
+holder.handShakeNon.setVisibility(View.GONE);
+   holder.handshakeYes.setBackgroundResource(R.drawable.ic_hand_shake_yes);
+        holder.handShakeNon.setBackgroundResource(R.drawable.ic_hand_shake_no);
+            Log.e("state", String.valueOf(getVersementItems().get(position).getValideState()));
                 if(getVersementItems().get(position).getAction().equals("versement")){
                     holder.actionImageView.setBackgroundResource(R.drawable.mantoman);
                     holder.eventName.setText("Versement");
                     holder.eventDescription.setText("Vous avez payé "+getVersementItems().get(position).getDernierVersement()+" DA à monsieur le comptable "+getVersementItems().get(position).getComptableFirstName()+" "+getVersementItems().get(position).getComptableLastName());
                     holder.createdDate.setText("Le "+getVersementItems().get(position).getCreatedDate());
 
+                    if(getVersementItems().get(position).getValideState()==0){
+
+                    }else if(getVersementItems().get(position).getValideState()==1){
+                        holder.validationLayout.setVisibility(View.GONE);
+                        holder.handshakeYes.setVisibility(View.VISIBLE);
+                    }else if (getVersementItems().get(position).getValideState()==2){
+                        holder.validationLayout.setVisibility(View.GONE);
+                        holder.handShakeNon.setVisibility(View.VISIBLE);
+                    }
+
                 }else{
                     holder.actionImageView.setBackgroundResource(R.drawable.editcredit);
                     holder.eventName.setText("Modification de crédit");
                     holder.eventDescription.setText("Monsieur le comptable "+getVersementItems().get(position).getComptableFirstName()+" "+getVersementItems().get(position).getComptableLastName()+" a modifié votre crédit");
                     holder.createdDate.setText("Le "+getVersementItems().get(position).getCreatedDate());
+                    holder.validationLayout.setVisibility(View.GONE);
                 }
 
 
@@ -83,6 +123,12 @@ public class HistoriqueVersementAdapter extends RecyclerView.Adapter<HistoriqueV
   private TextView eventDescription;
   private TextView eventName;
   private  Button detail;
+  private Button ouiBtn;
+  private Button nonBtn;
+  private LinearLayout validationLayout;
+  private ImageView handshakeYes;
+  private ImageView handShakeNon;
+private  int idEvent;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
      actionImageView =(ImageView)itemView.findViewById(R.id.actionImageView);
@@ -91,6 +137,13 @@ public class HistoriqueVersementAdapter extends RecyclerView.Adapter<HistoriqueV
             eventName=(TextView)itemView.findViewById(R.id.event);
             detail =(Button)itemView.findViewById(R.id.detail);
             detail.setOnClickListener(this);
+            validationLayout = (LinearLayout)itemView.findViewById(R.id.validationLayout);
+            ouiBtn = (Button)itemView.findViewById(R.id.ouiBtn);
+            nonBtn = (Button)itemView.findViewById(R.id.nonBtn);
+            ouiBtn.setOnClickListener(this);
+            nonBtn.setOnClickListener(this);
+            handshakeYes = (ImageView)itemView.findViewById(R.id.handshakeyes);
+            handShakeNon = (ImageView)itemView.findViewById(R.id.handshakenon);
 
         }
 
@@ -101,6 +154,54 @@ public class HistoriqueVersementAdapter extends RecyclerView.Adapter<HistoriqueV
 
                     DetailsVersementDialog detailsVersementDialog = DetailsVersementDialog.newInstance("title",versementItems.get(getAdapterPosition()));
                     detailsVersementDialog.show(getFm(),"title");
+                    break;
+
+                case R.id.ouiBtn:
+   Log.e("id",idEvent+"   "+idLivreur);
+
+                   progressLoaderListener.showProgress();
+                   AndroidNetworking.post("http://www.casbahdz.com/adm/CRUD1.php")
+                            .addBodyParameter("action","valider versement livreur").addBodyParameter("id_event", String.valueOf(idEvent))
+                            .addBodyParameter("id_livreur", String.valueOf(idLivreur))
+                            .setTag("test")
+                            .setPriority(Priority.MEDIUM)
+                            .build()
+                            .getAsString(new StringRequestListener() {
+                                @Override
+                                public void onResponse(String response) {
+                                 Log.e("string",response);
+                                    validationLayout.setVisibility(View.GONE);
+                                    handshakeYes.setVisibility(View.VISIBLE);
+                                    progressLoaderListener.closeProgress();
+                                }
+                                @Override
+                                public void onError(ANError anError) {
+                                     Log.e("error",anError.getMessage());
+                                    progressLoaderListener.closeProgress();
+                                }
+                            });
+                    break;
+                case R.id.nonBtn:
+                    progressLoaderListener.showProgress();
+                    AndroidNetworking.post("http://www.casbahdz.com/adm/CRUD1.php")
+                            .addBodyParameter("action","refuser versement livreur").addBodyParameter("id_event", String.valueOf(idEvent))
+                            .setTag("test")
+                            .setPriority(Priority.MEDIUM)
+                            .build()
+                            .getAsString(new StringRequestListener() {
+                                @Override
+                                public void onResponse(String response) {
+
+                                    validationLayout.setVisibility(View.GONE);
+                                    handShakeNon.setVisibility(View.VISIBLE);
+                                    progressLoaderListener.closeProgress();
+                                }
+                                @Override
+                                public void onError(ANError anError) {
+                                    Log.e("error",anError.getMessage());
+                                    progressLoaderListener.closeProgress();
+                                }
+                            });
                     break;
                 default:
                     break;

@@ -2,6 +2,7 @@ package com.casbaherpapp.myapplication.imad;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
@@ -19,10 +27,10 @@ import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.casbaherpapp.myapplication.BDD;
 import com.casbaherpapp.myapplication.R;
 import com.casbaherpapp.myapplication.imad.Adapters.CardListAdapter;
-import com.casbaherpapp.myapplication.imad.Entities.Product;
 import com.casbaherpapp.myapplication.imad.BottomSheetDialog.CartBottomSheetDialog;
 import com.casbaherpapp.myapplication.imad.BottomSheetDialog.HistoryBottomSheetDialog;
 import com.casbaherpapp.myapplication.imad.Dialog.FilterDialogFragment;
+import com.casbaherpapp.myapplication.imad.Entities.Product;
 import com.casbaherpapp.myapplication.imad.Listerners.ClickListener;
 import com.casbaherpapp.myapplication.imad.Listerners.FilterFamilyListener;
 import com.casbaherpapp.myapplication.imad.Listerners.ShopingCartListener;
@@ -34,15 +42,7 @@ import org.json.JSONException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-public class OrderProducts extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
+public class OrderProductsDistributeur extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     public TextView prixTotal;
     public  double total =0;
@@ -50,7 +50,7 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
     private ArrayList<Product> products;
     private RecyclerView recyclerView;
     private CardListAdapter adapter;
-
+    private static final String DATA_URL = "http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php";//developed by IMAD
     private TextView textCartItemCount;
     private  int cartItemCount = 0 ;
     private TextView filterTitle;
@@ -64,12 +64,10 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
 
         prixTotal =(TextView) findViewById(R.id.tv_total);
         filterTitle=(TextView) findViewById(R.id.filterTitle);
-
-
         products = new ArrayList<Product>();
           recyclerView = findViewById(R.id.recycler_cart);
         recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(OrderProducts.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(OrderProductsDistributeur.this));
 
         fm = getSupportFragmentManager();
         cartBottomSheetDialog =CartBottomSheetDialog.newInstance(new ShopingCartListener() {
@@ -119,15 +117,18 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
                prixTotal.setText(total + "DA");
             }
         });
-        dataBase = new BDD(OrderProducts.this);
-        fetchDataFromDB(); //fetch products from database and show it
+
+        dataBase = new BDD(OrderProductsDistributeur.this);
+        get_produit_disponible();
+
+        //fetch products from database and show it
 
 
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu_dist, menu);
         MenuItem menuItem = menu.findItem(R.id.action_search);
 
         SearchView searchView = (SearchView) menuItem.getActionView();
@@ -203,7 +204,7 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
             case R.id.cart:
 
                     if(cartItemCount==0){
-                        final MaterialAlertDialogBuilder builder =new MaterialAlertDialogBuilder(OrderProducts.this,R.style.AlertDialogTheme);
+                        final MaterialAlertDialogBuilder builder =new MaterialAlertDialogBuilder(OrderProductsDistributeur.this,R.style.AlertDialogTheme);
 
                         builder
                                 .setTitle("Remarque")
@@ -220,9 +221,21 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
                         cartBottomSheetDialog.show(fm,"title");
 
                     }
+                    return true;
 
 
+            case R.id.action_disconnect:
+                dataBase.open();
+                dataBase.dec();
+                dataBase.close();
+
+                Intent intent = this.getBaseContext().getPackageManager().getLaunchIntentForPackage(this.getBaseContext().getPackageName() );
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(0);
                 return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -279,7 +292,7 @@ products.add(p);
 
         dataBase.close();
         if(products.size()!=0){
-            adapter = new CardListAdapter(OrderProducts.this,getSupportFragmentManager(), products, prixTotal, new ClickListener() {
+            adapter = new CardListAdapter(OrderProductsDistributeur.this,getSupportFragmentManager(), products, prixTotal, new ClickListener() {
                 @Override
                 public void onPositionClicked(int position) {
                     // callback performed on click
@@ -328,7 +341,7 @@ products.add(p);
 
         }
         else {
-            Toast.makeText(OrderProducts.this, "Pas de produits", Toast.LENGTH_SHORT).show();
+            Toast.makeText(OrderProductsDistributeur.this, "Pas de produits", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -360,4 +373,147 @@ switch (view.getId()) {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(),0);
     }
+    private void get_produit_disponible() {
+
+
+
+
+        AndroidNetworking.post(DATA_URL)
+                .addBodyParameter("action","0")
+
+                .setTag("test")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        if (response != null){
+                            int id;
+                            String nom;
+                            String famille;
+                            int fardeau;
+                            int palette;
+                            double prix_usine;
+                            int quantite_u;
+
+
+                            try {
+
+                                for(int i = 0 ; i<response.length();i++) {
+
+                                    id = response.getJSONObject(i).getInt("id");
+                                    nom = response.getJSONObject(i).getString("nom");
+                                    famille = response.getJSONObject(i).getString("famille");
+                                    fardeau = response.getJSONObject(i).getInt("fardeau");
+                                    palette = response.getJSONObject(i).getInt("palette");
+                                    prix_usine = response.getJSONObject(i).getDouble("prix_usine");
+                                    quantite_u = response.getJSONObject(i).getInt("quantite_u");
+
+                                    Product p = new Product(
+                                         id,
+                                           nom,
+                                          famille,
+                                           fardeau,
+                                            palette,
+                                           prix_usine,
+                                            quantite_u
+                                    );
+
+
+
+                                    products.add(p);
+                                }
+                                if(products.size()!=0){
+                                    adapter = new CardListAdapter(OrderProductsDistributeur.this,getSupportFragmentManager(), products, prixTotal, new ClickListener() {
+                                        @Override
+                                        public void onPositionClicked(int position) {
+                                            // callback performed on click
+                                        }
+
+                                        @Override
+                                        public void onButtonPressed(View view) {
+
+                                        }
+
+                                        @Override
+                                        public void onLongClicked(int position) {
+                                            // callback performed on click
+                                        }
+                                    }, new ShopingCartListener() {
+                                        @Override
+                                        public void addProductToCart(Product product) {
+
+                                            cartBottomSheetDialog.addProductToCart(product);
+
+                                            total = total + product.getPrixVente();
+                                            cartItemCount = cartItemCount +1;
+                                            textCartItemCount.setText(String.valueOf(cartItemCount));
+                                            DecimalFormat df2 = new DecimalFormat("#.##");
+                                            prixTotal.setText(df2.format(total) + "DA");
+                                            setupBadge();
+
+                                        }
+
+                                        @Override
+                                        public void removeProductFromCart(int id,int position) {
+
+                                        }
+
+                                        @Override
+                                        public void removeAllProductFromCart() {
+
+                                        }
+
+                                        @Override
+                                        public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
+
+                                        }
+                                    });
+                                    recyclerView.setAdapter(adapter);
+
+                                }
+                                else {
+                                    Toast.makeText(OrderProductsDistributeur.this, "Pas de produits", Toast.LENGTH_SHORT).show();
+                                }
+
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+
+
+
+
+
+
+
+
+
+                        }
+
+
+
+                    }
+
+                    //ERROR
+                    @Override
+                    public void onError(ANError anError) {
+
+
+                        Log.e("imad","errorS");
+                        anError.printStackTrace();
+
+                    }
+
+
+                });
+    }
+
 }
+
+
