@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentManager;
@@ -36,13 +37,15 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     private ShopingCartListener shopingCartListener;
     private FragmentManager fm;
     private  OrderProductDialog orderProductDialog;
+    private String category;
     // data is passed into the constructor
     public CardListAdapter(Context context, FragmentManager fm, ArrayList<Product> products, TextView prix_total,
-                           ClickListener listener, ShopingCartListener shopingCartListener) {
+                           ClickListener listener, ShopingCartListener shopingCartListener,String category) {
         this.mInflater = LayoutInflater.from(context);
         this.fm=fm;
         this.listener = listener;
         this.context = context;
+        this.category=category;
         this.products = products;
         this.backUpProducts = products;
         this.shopingCartListener = shopingCartListener;
@@ -64,6 +67,10 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
        Product p = products.get(position);
         holder.nomProduit.setText(p.getNom());
+                if(category.equals("petit")){
+                    holder.ht.setVisibility(View.GONE);
+
+                }else{holder.ht.setVisibility(View.VISIBLE);}
         holder.prix.setText(String.valueOf(p.getPrix_usine()+" DA"));
         holder.nombreF.setText(p.getFardeau()+"F");
         holder.nombreP.setText(p.getPalette()+"P");
@@ -158,6 +165,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView nomProduit;
+        TextView  ht;
         TextView prix;
         TextView nombreF;
         TextView nombreP;
@@ -182,6 +190,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
             quantiteUsine =itemView.findViewById(R.id.quantiteUsine);
             nomProduit.setOnClickListener(this);
             commander.setOnClickListener(this);
+            ht =(TextView )itemView.findViewById(R.id.ht);
 
 
         }
@@ -219,7 +228,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
                                                                 double prix = numberBouteille * backUpProducts.get(i).getPrix_usine();
                                                                 DecimalFormat df2 = new DecimalFormat("#.##");
-                                                                prix = Double.valueOf(df2.format(prix));
+//                                                                prix = Double.valueOf(df2.format(prix));
                                                                 if (prix != 0) {
                                                                     backUpProducts.get(i).setPrixVente(prix);
                                                                     backUpProducts.get(i).setSelected(true);

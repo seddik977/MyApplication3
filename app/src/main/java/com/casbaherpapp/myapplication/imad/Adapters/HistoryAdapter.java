@@ -32,9 +32,11 @@ public class HistoryAdapter  extends RecyclerView.Adapter<HistoryAdapter.ViewHol
     private LayoutInflater mInflater;
     private Context context;
     private FragmentManager fm;
+    private String role;
     private RecyclerView parentRecyclerView;
-    public HistoryAdapter(FragmentManager fm,Context context, ArrayList<Order> orders) {
+    public HistoryAdapter(FragmentManager fm,Context context, ArrayList<Order> orders,String role) {
         this.orders = orders;
+        this.role=role;
         this.mInflater = LayoutInflater.from(context);
         this.context =context;
         this.fm =fm;
@@ -142,7 +144,7 @@ public class HistoryAdapter  extends RecyclerView.Adapter<HistoryAdapter.ViewHol
         public void onClick(View view) {
                     switch (view.getId()){
                         case R.id.show:
-                            OrderItemsDialog orderItemsDialog =OrderItemsDialog.newInstance(getContext(),"title",orderId);
+                            OrderItemsDialog orderItemsDialog =OrderItemsDialog.newInstance(getContext(),"title",role,orderId);
                             orderItemsDialog.show(getFm(),"title");
 
                             break;

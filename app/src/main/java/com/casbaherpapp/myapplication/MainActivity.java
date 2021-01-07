@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity  implements  View.OnClickLis
 
         b=bd.getb();
 
-        Log.e("role",bd.getrole()+user+pass+b);
+
 
 
         if(!user.equals("") && !pass.equals("0")){
@@ -294,7 +294,7 @@ public void loginDistributeur(){
                                 //SHOW RESPONSE FROM SERVER
                                 id=response.getJSONObject(0).getInt("id");
                                 b=response.getJSONObject(0).getString("branche");
-                                Toast.makeText(getBaseContext(), id+"==="+b, Toast.LENGTH_SHORT).show();
+
                                 bd.open();
 
                                 bd.Insert(id,user,pass,b, role);
@@ -515,12 +515,17 @@ private void RedirectDistributeur(int id,String branche,String role){
                  else{
 
                     if(role.equals("Livreur")){
-                        Toast.makeText(getBaseContext(),"this is livreur", Toast.LENGTH_SHORT).show();
+
                         loginLivreur();
                     }else if(role.equals("Distributeur")){
 
                         loginDistributeur();
-                  Toast.makeText(getBaseContext(), "this is distributeur", Toast.LENGTH_SHORT).show();
+
+                    }else {
+
+                        loginBigAccount();
+
+
                     }
 
 
@@ -539,5 +544,72 @@ private void RedirectDistributeur(int id,String branche,String role){
 
 
          }
+    }
+
+    private void loginBigAccount() {
+        final String pass = String.valueOf(passWordTextInputLayout.getEditText().getText().toString().trim());
+        String s=String.valueOf(userNameTextInputLayout.getEditText().getText().toString().trim()).toLowerCase();
+        final String user = s.replaceAll("\\s+","");
+        if(user==null || pass==null)
+        {
+            Toast.makeText(MainActivity.this, "Remplissez tous les champs SVP", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+
+
+            AndroidNetworking.post(DATA_INSERT_URL)
+                    .addBodyParameter("action","login dist")
+                    .addBodyParameter("user",user)
+                    .addBodyParameter("password",pass)
+                    .setTag("test")
+                    .setPriority(Priority.MEDIUM)
+                    .build()
+                    .getAsJSONArray(new JSONArrayRequestListener() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+
+                            if(response != null)
+                                try {
+                                    login.setClickable(true);
+                                    progress.dismiss();
+                                    //SHOW RESPONSE FROM SERVER
+                                    id=response.getJSONObject(0).getInt("id");
+                                    b=response.getJSONObject(0).getString("branche");
+
+                                    bd.open();
+
+                                    bd.Insert(id,user,pass,b, "Distributeur");
+
+                                    bd.close();
+
+
+                                    // String responseString= response.get(0).toString();
+                                    RedirectDistributeur(id,b, role);
+
+                                } catch (JSONException e) {
+
+                                    login.setClickable(true);
+                                    progress.dismiss();
+                                    e.printStackTrace();
+                                    Toast.makeText(MainActivity.this, "Nom d'utilisateur où le mot de passe sont incorrectes ", Toast.LENGTH_SHORT).show();
+                                }
+
+                        }
+
+                        //ERROR
+                        @Override
+                        public void onError(ANError anError) {
+                            Log.e("error",anError.getMessage());
+                            login.setClickable(true);
+                            progress.dismiss();
+                            Toast.makeText(MainActivity.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+
+                        }
+
+
+                    });
+
+        }
     }
 }

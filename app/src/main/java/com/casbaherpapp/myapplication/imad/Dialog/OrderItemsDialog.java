@@ -43,12 +43,13 @@ public class OrderItemsDialog extends DialogFragment implements  View.OnClickLis
     private Context context;
     private int orderId;
     private Button closeButton;
-
+    private String role;
     private RecyclerView orderItemsRecyclerView;
     private ArrayList<Product> orderProductItems;
-    public OrderItemsDialog(Context context, int orderId) {
+    public OrderItemsDialog(Context context,String role,int orderId) {
         this.orderId =orderId;
         this.context = context;
+        this.role = role;
     }
 
     public int getOrderId() {
@@ -59,8 +60,8 @@ public class OrderItemsDialog extends DialogFragment implements  View.OnClickLis
         this.orderId = orderId;
     }
 
-    public static OrderItemsDialog newInstance(Context context, String title, int orderId){
-        OrderItemsDialog oid = new OrderItemsDialog(context,orderId);
+    public static OrderItemsDialog newInstance(Context context, String title,String role, int orderId){
+        OrderItemsDialog oid = new OrderItemsDialog(context,role,orderId);
         Bundle args = new Bundle();
         args.putString("title", title);
         oid.setArguments(args);
@@ -100,68 +101,99 @@ public class OrderItemsDialog extends DialogFragment implements  View.OnClickLis
     }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        closeButton =(Button)view.findViewById(R.id.closeBtn);
+        closeButton = (Button) view.findViewById(R.id.closeBtn);
         closeButton.setOnClickListener(this);
         orderProductItems = new ArrayList<>();
-        orderItemsRecyclerView = (RecyclerView)view.findViewById(R.id.orderItemRecyclerView);
+        orderItemsRecyclerView = (RecyclerView) view.findViewById(R.id.orderItemRecyclerView);
         orderItemsRecyclerView.hasFixedSize();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.check_border));
         orderItemsRecyclerView.addItemDecoration(dividerItemDecoration);
         orderItemsRecyclerView.setLayoutManager(layoutManager);
+        if (role.equals("Distributeur")) {
 
-        AndroidNetworking.post("http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php")
-                .addBodyParameter("action","6").addBodyParameter("data", String.valueOf(getOrderId()))
-                .setTag("test")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONArray(new JSONArrayRequestListener() {
+            AndroidNetworking.post("http://www.casbahdz.com/adm/CommandeDist/commande_dist_crud.php")
+                    .addBodyParameter("action","6").addBodyParameter("data", String.valueOf(getOrderId()))
+                    .setTag("test")
+                    .setPriority(Priority.MEDIUM)
+                    .build()
+                    .getAsJSONArray(new JSONArrayRequestListener() {
+                        @Override
+                        public void onResponse(JSONArray response) {
 
-                    @Override
-                    public void onResponse(JSONArray response) {
-
-                        Log.e("sizeimad", String.valueOf(response.length()));
-                        for(int i =0;i<response.length();i++){
-                            Product product =new Product();
-                            try {
-
-
-
-                                product.setNom(response.getJSONObject(i).getString("nom"));
-                                product.setFamille(response.getJSONObject(i).getString("famille"));
-                                product.setPrixVente(response.getJSONObject(i).getDouble("prix_vente"));
-                                product.setId(response.getJSONObject(i).getInt("id_produit"));
-                                product.setNumberDesFardeaux(response.getJSONObject(i).getInt("nombre_fardeaux"));
-                                product.setNumberDesPalettes(response.getJSONObject(i).getInt("nombre_palettes"));
-
-                                orderProductItems.add(product);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            for(int i =0;i<response.length();i++){
+                                Product product =new Product();
+                                try {
+                                    product.setNom(response.getJSONObject(i).getString("nom"));
+                                    product.setFamille(response.getJSONObject(i).getString("famille"));
+                                    product.setPrixVente(response.getJSONObject(i).getDouble("prix_vente"));
+                                    product.setId(response.getJSONObject(i).getInt("id_produit"));
+                                    product.setNumberDesFardeaux(response.getJSONObject(i).getInt("nombre_fardeaux"));
+                                    product.setNumberDesPalettes(response.getJSONObject(i).getInt("nombre_palettes"));
+                                    orderProductItems.add(product);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                            orderItemsRecyclerView.setAdapter(new OrderItemAdapter(getContext(),orderProductItems));
+                        }
 
-
+                        //ERROR
+                        @Override
+                        public void onError(ANError anError) {
+                            anError.printStackTrace();
                         }
 
 
-                        orderItemsRecyclerView.setAdapter(new OrderItemAdapter(getContext(),orderProductItems));
-
-                    }
-
-                    //ERROR
-                    @Override
-                    public void onError(ANError anError) {
+                    });
 
 
 
-                        anError.printStackTrace();
 
-                    }
+        }
+        if (role.equals("Livreur")) {
 
 
-                });
+            AndroidNetworking.post("http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php")
+                    .addBodyParameter("action","6").addBodyParameter("data", String.valueOf(getOrderId()))
+                    .setTag("test")
+                    .setPriority(Priority.MEDIUM)
+                    .build()
+                    .getAsJSONArray(new JSONArrayRequestListener() {
+                        @Override
+                        public void onResponse(JSONArray response) {
 
-    }
+                            for(int i =0;i<response.length();i++){
+                                Product product =new Product();
+                                try {
+                                    product.setNom(response.getJSONObject(i).getString("nom"));
+                                    product.setFamille(response.getJSONObject(i).getString("famille"));
+                                    product.setPrixVente(response.getJSONObject(i).getDouble("prix_vente"));
+                                    product.setId(response.getJSONObject(i).getInt("id_produit"));
+                                    product.setNumberDesFardeaux(response.getJSONObject(i).getInt("nombre_fardeaux"));
+                                    product.setNumberDesPalettes(response.getJSONObject(i).getInt("nombre_palettes"));
+                                    orderProductItems.add(product);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            orderItemsRecyclerView.setAdapter(new OrderItemAdapter(getContext(),orderProductItems));
+                        }
+
+                        //ERROR
+                        @Override
+                        public void onError(ANError anError) {
+                            anError.printStackTrace();
+                        }
+
+
+                    });
+
+        }
+
+        }
+
 
     @Override
     public void onResume() {
@@ -182,7 +214,6 @@ public class OrderItemsDialog extends DialogFragment implements  View.OnClickLis
                 switch (view.getId()){
                     case R.id.closeBtn:
                         getDialog().dismiss();
-
                         break;
 
                     default:

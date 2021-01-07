@@ -112,10 +112,10 @@ public class HistoryBottomSheetDialog extends BottomSheetDialogFragment implemen
         dataBase = new BDD(getActivity());
         dataBase.open();
       int id = dataBase.getID();
+        final String role =dataBase.getrole();
     dataBase.close();
         retourBtn =(Button)view.findViewById(R.id.retour);
         retourBtn.setOnClickListener(this);
-
         historyRecyclerView = (RecyclerView)view.findViewById(R.id.historyRecyclerView);
         historyRecyclerView .hasFixedSize();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -124,24 +124,25 @@ public class HistoryBottomSheetDialog extends BottomSheetDialogFragment implemen
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.check_border));
         historyRecyclerView .addItemDecoration(dividerItemDecoration);
         historyRecyclerView .setLayoutManager(layoutManager);
-        historyAdapter = new HistoryAdapter(getActivity().getSupportFragmentManager(),getContext(),orders);
+        historyAdapter = new HistoryAdapter(getActivity().getSupportFragmentManager(),getContext(),orders,role);
         historyRecyclerView .setAdapter(historyAdapter);
-      AndroidNetworking.post("http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php")
+
+        if(role.equals("Distributeur")){
+            AndroidNetworking.post("http://www.casbahdz.com/adm/CommandeDist/commande_dist_crud.php")
                 .addBodyParameter("action","5").addBodyParameter("data", String.valueOf(id))
                 .setTag("test")
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
-
                     @Override
                     public void onResponse(JSONArray response) {
-                          for(int i=0;i<response.length();i++){
+                        for(int i=0;i<response.length();i++){
 
                             try {
                                 Order order = new Order();
                                 double prixTotal = response.getJSONObject(i).getDouble("total_prix");
-                               int id =  response.getJSONObject(i).getInt("id");
-                                  int state= response.getJSONObject(i).getInt("state");
+                                int id =  response.getJSONObject(i).getInt("id");
+                                int state= response.getJSONObject(i).getInt("state");
                                 String createdDate = response.getJSONObject(i).getString("created_date");
 
                                 order.setPrixtTotal(prixTotal);
@@ -149,7 +150,7 @@ public class HistoryBottomSheetDialog extends BottomSheetDialogFragment implemen
                                 order.setIdOrder(id);
                                 order.setCreatedDate(createdDate);
 
-                                        historyAdapter.getOrders().add(order);
+                                historyAdapter.getOrders().add(order);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -172,6 +173,56 @@ public class HistoryBottomSheetDialog extends BottomSheetDialogFragment implemen
 
 
                 });
+        }
+        if(role.equals("Livreur")){
+            AndroidNetworking.post("http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php")
+                .addBodyParameter("action","5").addBodyParameter("data", String.valueOf(id))
+                .setTag("test")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for(int i=0;i<response.length();i++){
+
+                            try {
+                                Order order = new Order();
+                                double prixTotal = response.getJSONObject(i).getDouble("total_prix");
+                                int id =  response.getJSONObject(i).getInt("id");
+                                int state= response.getJSONObject(i).getInt("state");
+                                String createdDate = response.getJSONObject(i).getString("created_date");
+
+                                order.setPrixtTotal(prixTotal);
+                                order.setVerified(state==1?true:false);
+                                order.setIdOrder(id);
+                                order.setCreatedDate(createdDate);
+
+                                historyAdapter.getOrders().add(order);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        historyAdapter.notifyDataSetChanged();
+
+
+                    }
+
+                    //ERROR
+                    @Override
+                    public void onError(ANError anError) {
+
+
+
+                        anError.printStackTrace();
+
+                    }
+
+
+                });
+        }
+
 
 
 

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
+import com.androidnetworking.gsonparserfactory.GsonParserFactory;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.ParsedRequestListener;
 import com.casbaherpapp.myapplication.BDD;
@@ -34,6 +35,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -193,7 +196,6 @@ public class CartBottomSheetDialog extends BottomSheetDialogFragment implements 
 
 
 if(role.equals("Distributeur")){
-
     AndroidNetworking.post(DATA_URL_DIST).addBodyParameter("action", "1").
             addBodyParameter("totalPrix", String.valueOf(finalPrixTotal)).
             addBodyParameter("idDist", String.valueOf(id)).
@@ -208,7 +210,7 @@ if(role.equals("Distributeur")){
 
                     for (Product pro : shopingProducts) {
                         int a = 0;
-                        AndroidNetworking.post(DATA_URL).addBodyParameter("action", "2").
+                        AndroidNetworking.post(DATA_URL_DIST).addBodyParameter("action", "2").
                                 addBodyParameter("idCommande", String.valueOf(idCommande)).
                                 addBodyParameter("idProduit", String.valueOf(pro.getId())).
                                 addBodyParameter("prixVente", String.valueOf(pro.getPrixVente())).
@@ -224,6 +226,7 @@ if(role.equals("Distributeur")){
 
                             @Override
                             public void onError(ANError anError) {
+                                Log.e("error", anError.getMessage());
 
                             }
                         });
@@ -258,8 +261,9 @@ if(role.equals("Distributeur")){
 
 
 
+
 }
-if(role.equals("Livraireur")){
+if(role.equals("Livreur")){
 
 
     AndroidNetworking.post(DATA_URL).addBodyParameter("action", "1").

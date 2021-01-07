@@ -157,7 +157,7 @@ private  int idEvent;
                     break;
 
                 case R.id.ouiBtn:
-   Log.e("id",idEvent+"   "+idLivreur);
+
 
                    progressLoaderListener.showProgress();
                    AndroidNetworking.post("http://www.casbahdz.com/adm/CRUD1.php")

@@ -37,7 +37,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
-import com.casbaherpapp.myapplication.dialogfragment.EventDialogFragment;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.joanzapata.iconify.widget.IconButton;
@@ -317,8 +317,7 @@ public class Main extends AppCompatActivity {
 
         context=Main.this;
 
-        EventDialogFragment eventDialogFragment =EventDialogFragment.newInstance("imad");
-        eventDialogFragment.show(getSupportFragmentManager(), "imad");
+
 
     }
 

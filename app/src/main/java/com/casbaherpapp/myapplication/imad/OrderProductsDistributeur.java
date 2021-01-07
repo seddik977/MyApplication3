@@ -1,6 +1,7 @@
 package com.casbaherpapp.myapplication.imad;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -41,16 +42,16 @@ import org.json.JSONException;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
 public class OrderProductsDistributeur extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
-
     public TextView prixTotal;
+    private ProgressDialog nDialog;
     public  double total =0;
     private BDD dataBase;
+    private static final double TVA = 1.19;
     private ArrayList<Product> products;
     private RecyclerView recyclerView;
     private CardListAdapter adapter;
-    private static final String DATA_URL = "http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php";//developed by IMAD
+    private static final String DATA_URL = "http://www.casbahdz.com/adm/CommandeDist/commande_dist_crud.php";//developed by IMAD
     private TextView textCartItemCount;
     private  int cartItemCount = 0 ;
     private TextView filterTitle;
@@ -58,10 +59,12 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
      private  FilterDialogFragment filterDialogFragment;
         private  CartBottomSheetDialog cartBottomSheetDialog;
         private FragmentManager fm;
+        private String category;
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_products);
-
+        category="petit";
         prixTotal =(TextView) findViewById(R.id.tv_total);
         filterTitle=(TextView) findViewById(R.id.filterTitle);
         products = new ArrayList<Product>();
@@ -73,14 +76,13 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
         cartBottomSheetDialog =CartBottomSheetDialog.newInstance(new ShopingCartListener() {
             @Override
             public void addProductToCart(Product product) {
-
             }
-
             @Override
             public void removeProductFromCart(int id,int position) {
 
                double prix =  cartBottomSheetDialog.getShopingProducts().get(position).getPrixVente();
                total = total - prix;
+
                 prixTotal.setText(String.valueOf(total)+"DA");
                 cartBottomSheetDialog.removeProductFromCart(id,position);
                 adapter.showUpProduct(id);
@@ -123,7 +125,12 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
 
         //fetch products from database and show it
 
-
+        nDialog = new ProgressDialog(OrderProductsDistributeur.this);
+        nDialog.setMessage("Chargement..");
+        nDialog.setTitle("Chargement des donnees");
+        nDialog.setIndeterminate(false);
+        nDialog.setCancelable(true);
+        nDialog.show();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -336,7 +343,7 @@ products.add(p);
                 public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
 
                 }
-            });
+            },category);
             recyclerView.setAdapter(adapter);
 
         }
@@ -374,19 +381,19 @@ switch (view.getId()) {
         imm.hideSoftInputFromWindow(view.getWindowToken(),0);
     }
     private void get_produit_disponible() {
-
-
-
-
+        dataBase.open();
+        int id =dataBase.getID();
+        dataBase.close();
         AndroidNetworking.post(DATA_URL)
                 .addBodyParameter("action","0")
-
+                .addBodyParameter("id", String.valueOf(id))
                 .setTag("test")
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
                     public void onResponse(JSONArray response) {
+                        nDialog.dismiss();
 
                         if (response != null){
                             int id;
@@ -398,7 +405,9 @@ switch (view.getId()) {
                             int quantite_u;
 
 
+
                             try {
+
 
                                 for(int i = 0 ; i<response.length();i++) {
 
@@ -409,6 +418,7 @@ switch (view.getId()) {
                                     palette = response.getJSONObject(i).getInt("palette");
                                     prix_usine = response.getJSONObject(i).getDouble("prix_usine");
                                     quantite_u = response.getJSONObject(i).getInt("quantite_u");
+                                    category = response.getJSONObject(i).getString("category");
 
                                     Product p = new Product(
                                          id,
@@ -469,7 +479,7 @@ switch (view.getId()) {
                                         public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
 
                                         }
-                                    });
+                                    },category);
                                     recyclerView.setAdapter(adapter);
 
                                 }
@@ -484,16 +494,6 @@ switch (view.getId()) {
                             }
 
 
-
-
-
-
-
-
-
-
-
-
                         }
 
 
@@ -505,8 +505,8 @@ switch (view.getId()) {
                     public void onError(ANError anError) {
 
 
-                        Log.e("imad","errorS");
-                        anError.printStackTrace();
+                        Log.e("imad",anError.getMessage());
+
 
                     }
 

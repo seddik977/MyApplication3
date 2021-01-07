@@ -50,6 +50,7 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
     private ArrayList<Product> products;
     private RecyclerView recyclerView;
     private CardListAdapter adapter;
+  private String category;
 
     private TextView textCartItemCount;
     private  int cartItemCount = 0 ;
@@ -61,7 +62,7 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_products);
-
+            category="petit";
         prixTotal =(TextView) findViewById(R.id.tv_total);
         filterTitle=(TextView) findViewById(R.id.filterTitle);
 
@@ -256,7 +257,7 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
 
         Cursor c = dataBase.getAllProducts();
 
-
+Log.e("size", String.valueOf(c.getCount()));
 
 
         while (c.moveToNext()){
@@ -323,7 +324,7 @@ products.add(p);
                 public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
 
                 }
-            });
+            },category);
             recyclerView.setAdapter(adapter);
 
         }
