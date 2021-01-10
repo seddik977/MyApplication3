@@ -1,11 +1,6 @@
 package com.casbaherpapp.myapplication.imad.Adapters;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.FileUtils;
-import android.os.RecoverySystem;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,54 +10,45 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.casbaherpapp.myapplication.R;
 import com.casbaherpapp.myapplication.imad.Dialog.DetailsVersementDialog;
 import com.casbaherpapp.myapplication.imad.Entities.VersementItem;
-import com.casbaherpapp.myapplication.imad.Listerners.ClickListener;
 import com.casbaherpapp.myapplication.imad.Listerners.ProgressLoaderListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-public class HistoriqueVersementAdapter extends RecyclerView.Adapter<HistoriqueVersementAdapter.ViewHolder> implements Filterable {
+public class HistoriqueDistVersementAdapter extends RecyclerView.Adapter<HistoriqueDistVersementAdapter.ViewHolder> implements Filterable {
 
     private LayoutInflater mInflater;
     private Context context;
     private FragmentManager fm;
     private ArrayList<VersementItem> versementItems;
-    private int idLivreur;
+    private int idDist;
 private ProgressLoaderListener progressLoaderListener;
-    public HistoriqueVersementAdapter(Context context, FragmentManager fm, ArrayList<VersementItem> versementItems,int idLivreur, ProgressLoaderListener progressLoaderListener){
+    public HistoriqueDistVersementAdapter(Context context, FragmentManager fm, ArrayList<VersementItem> versementItems, int idDist, ProgressLoaderListener progressLoaderListener){
         this.mInflater = LayoutInflater.from(context);
         this.versementItems = versementItems;
         this.fm=fm;
         this.context = context;
      this.progressLoaderListener = progressLoaderListener;
-     this.idLivreur = idLivreur;
+     this.idDist = idDist;
     }
 
     @Override
-    public HistoriqueVersementAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HistoriqueDistVersementAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = mInflater.inflate(R.layout.historiqueversement_layout, parent, false);
-        return new HistoriqueVersementAdapter.ViewHolder(view);
+        return new HistoriqueDistVersementAdapter.ViewHolder(view);
     }
 
     @Override
@@ -79,7 +65,7 @@ private ProgressLoaderListener progressLoaderListener;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HistoriqueVersementAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HistoriqueDistVersementAdapter.ViewHolder holder, int position) {
         holder.idEvent = getVersementItems().get(position).getId();
   holder.handshakeYes.setVisibility(View.GONE);
 holder.handShakeNon.setVisibility(View.GONE);
@@ -161,8 +147,8 @@ private  int idEvent;
 
                    progressLoaderListener.showProgress();
                    AndroidNetworking.post("http://www.casbahdz.com/adm/CRUD1.php")
-                            .addBodyParameter("action","valider versement livreur").addBodyParameter("id_event", String.valueOf(idEvent))
-                            .addBodyParameter("id_livreur", String.valueOf(idLivreur))
+                            .addBodyParameter("action","valider versement distributeur").addBodyParameter("id_event", String.valueOf(idEvent))
+                            .addBodyParameter("id_dist", String.valueOf(idDist))
                             .setTag("test")
                             .setPriority(Priority.MEDIUM)
                             .build()
@@ -184,7 +170,7 @@ private  int idEvent;
                 case R.id.nonBtn:
                     progressLoaderListener.showProgress();
                     AndroidNetworking.post("http://www.casbahdz.com/adm/CRUD1.php")
-                            .addBodyParameter("action","refuser versement livreur").addBodyParameter("id_event", String.valueOf(idEvent))
+                            .addBodyParameter("action","refuser versement distributeur").addBodyParameter("id_event", String.valueOf(idEvent))
                             .setTag("test")
                             .setPriority(Priority.MEDIUM)
                             .build()

@@ -11,12 +11,9 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.casbaherpapp.myapplication.BDD;
-import com.casbaherpapp.myapplication.ForegroundService;
 import com.casbaherpapp.myapplication.Main;
 import com.casbaherpapp.myapplication.R;
-import com.casbaherpapp.myapplication.imad.Adapters.HistoriqueVersementAdapter;
-import com.casbaherpapp.myapplication.imad.Adapters.HistoryAdapter;
-import com.casbaherpapp.myapplication.imad.Listerners.ClickListener;
+import com.casbaherpapp.myapplication.imad.Adapters.HistoriqueLivVersementAdapter;
 import com.casbaherpapp.myapplication.imad.Listerners.ProgressLoaderListener;
 import com.google.android.material.appbar.MaterialToolbar;
 
@@ -32,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class Historique extends AppCompatActivity {
 private RecyclerView historiqueVersementRecyclerView;
-private HistoriqueVersementAdapter historiqueVersementAdapter;
+private HistoriqueLivVersementAdapter historiqueLivVersementAdapter;
 private ArrayList<VersementItem> versementItems;
 private MaterialToolbar toolbar;
     private BDD dataBase;
@@ -65,7 +62,7 @@ private MaterialToolbar toolbar;
         historiqueVersementRecyclerView.addItemDecoration(dividerItemDecoration);
         historiqueVersementRecyclerView.setLayoutManager(layoutManager);
         versementItems = new ArrayList<VersementItem>();
-        historiqueVersementAdapter = new HistoriqueVersementAdapter(getApplicationContext(), getSupportFragmentManager(), versementItems,id, new ProgressLoaderListener() {
+        historiqueLivVersementAdapter = new HistoriqueLivVersementAdapter(getApplicationContext(), getSupportFragmentManager(), versementItems,id, new ProgressLoaderListener() {
             @Override
             public void showProgress() {
                progressDialog.show();
@@ -76,7 +73,7 @@ private MaterialToolbar toolbar;
              progressDialog.dismiss();
             }
         });
-        historiqueVersementRecyclerView.setAdapter(historiqueVersementAdapter);
+        historiqueVersementRecyclerView.setAdapter(historiqueLivVersementAdapter);
 
         AndroidNetworking.post("http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php")
                 .addBodyParameter("action","9").addBodyParameter("data", String.valueOf(id))
@@ -116,12 +113,12 @@ private MaterialToolbar toolbar;
                                     versementItem.setDernierVersement(dernierVersement);
                                     versementItem.setVersementTotal(versementTotal);
                                     versementItem.setValideState(valideState);
-                                    historiqueVersementAdapter.getVersementItems().add(versementItem);
+                                    historiqueLivVersementAdapter.getVersementItems().add(versementItem);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
-                            historiqueVersementAdapter.notifyDataSetChanged();
+                            historiqueLivVersementAdapter.notifyDataSetChanged();
 
 
 

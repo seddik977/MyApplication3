@@ -297,7 +297,7 @@ public void loginDistributeur(){
 
                                 bd.open();
 
-                                bd.Insert(id,user,pass,b, role);
+                                bd.Insert(id,user,pass,b, role,"petit");
 
                                 bd.close();
 
@@ -362,7 +362,7 @@ RedirectDistributeur(id,b, role);
                                     b=response.getJSONObject(0).getString("branche");
                                     bd.open();
 
-                                    bd.Insert(id,user,pass,b,role);
+                                    bd.Insert(id,user,pass,b,role,"petit");
 
                                     bd.close();
                                     GPStask();
@@ -579,7 +579,7 @@ private void RedirectDistributeur(int id,String branche,String role){
 
                                     bd.open();
 
-                                    bd.Insert(id,user,pass,b, "Distributeur");
+                                    bd.Insert(id,user,pass,b, "Distributeur","grand");
 
                                     bd.close();
 

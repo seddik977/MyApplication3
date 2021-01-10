@@ -73,8 +73,17 @@ public class ForegroundService extends Service {
         BDD bd=new BDD(ForegroundService.this);
         bd.open();
         id = bd.getID();
+        String role =bd.getrole();
+
         bd.close();
-        requestLocationUpdates();
+        if(role.equals("Livreur")){
+            requestLocationUpdates();
+
+        }
+       if(role.equals("Distributeur")){
+
+
+       }
         return Service.START_STICKY;
 
     }

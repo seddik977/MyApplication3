@@ -26,12 +26,12 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
     <item
-        android:id="@+id/payment"
+        android:id="@+id/action_payment"
         android:title="Payment"
 
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/info"
+        android:id="@+id/action_info"
         android:title="info"
 
         app:showAsAction="ifRoom" />

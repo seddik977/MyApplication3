@@ -233,6 +233,7 @@ private int x=0,k=0, id=-1,cpt=0,cptp=0,cptliv=0,cptstock=0,countp=0,countliv=0,
                     "connecte" + " TEXT  default 'oui', " +
                     "branche" + " TEXT , " +
                     "role" + " TEXT , " +
+                    "category" + " TEXT , " +
                     "password" + " INTEGER NOT NULL );"
             );
             db.execSQL("CREATE TABLE stockm\n" +
@@ -311,6 +312,7 @@ private int x=0,k=0, id=-1,cpt=0,cptp=0,cptliv=0,cptstock=0,countp=0,countliv=0,
             cv.put("password", 0);
             cv.put("branche", "c");
             cv.put("role", "r");
+            cv.put("category","petit");
 
 
             db.insertWithOnConflict("login", null, cv, SQLiteDatabase.CONFLICT_IGNORE);
@@ -559,6 +561,7 @@ private int x=0,k=0, id=-1,cpt=0,cptp=0,cptliv=0,cptstock=0,countp=0,countliv=0,
                 "connecte" + " TEXT  default 'oui', " +
                 "branche" + " TEXT  , " +
                 "role" + " TEXT  , " +
+                "category" + " TEXT , " +
                 "password" + " INTEGER NOT NULL );"
         );
 
@@ -672,7 +675,7 @@ public void dec(){
 
     }
 
-    public long Insert(int id, String user, String mdp,String b,String role) {
+    public long Insert(int id, String user, String mdp,String b,String role,String category) {
         // TODO Auto-generated method stub
         ContentValues cv = new ContentValues();
         cv.put("id", id);
@@ -681,6 +684,7 @@ public void dec(){
         cv.put("branche",b );
         cv.put("connecte", "oui");
         cv.put("role", role);
+        cv.put("category",category);
 
         return ourDatabase.update("login", cv,null,null );
 
@@ -2111,6 +2115,23 @@ return 0;
         return "";
 
     }
+    public String getcategory(){
+        Cursor c =ourDatabase.rawQuery("select category from login  where connecte='oui'",null);
+        while (c.moveToNext()){
+
+            String data = String.valueOf(c.getString(c.getColumnIndex("category")));
+
+
+            return data;
+        }
+        if(c!= null)
+            c.close();
+        return "";
+
+    }
+
+
+
 
     public String getpassword(){
         Cursor c =ourDatabase.rawQuery("select password from login  where connecte='oui'",null);

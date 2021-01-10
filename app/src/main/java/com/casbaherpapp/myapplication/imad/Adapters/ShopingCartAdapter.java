@@ -35,12 +35,14 @@ public class ShopingCartAdapter extends RecyclerView.Adapter<ShopingCartAdapter.
     private  ShopingCartListener shopingCartListener;
     private Context context;
     private FragmentManager fm;
+
   public ShopingCartAdapter(Context context,FragmentManager fm, ArrayList<Product> shopingProducts, ShopingCartListener shopingCartListener){
 this.shopingProducts = shopingProducts;
       this.mInflater = LayoutInflater.from(context);
 this.shopingCartListener=shopingCartListener;
 this.context = context;
 this.fm=fm;
+
   }
 
     public ShopingCartListener getShopingCartListener() {

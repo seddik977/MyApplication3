@@ -119,7 +119,7 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
                total  = cartBottomSheetDialog.getShopingCartAdapter().editerProduct(nbreFardeaux,nbrePalettes,id);
                prixTotal.setText(total + "DA");
             }
-        });
+        },category);
         dataBase = new BDD(OrderProducts.this);
         fetchDataFromDB(); //fetch products from database and show it
 

@@ -60,16 +60,17 @@ public class CartBottomSheetDialog extends BottomSheetDialogFragment implements 
    private ArrayList<Product> shopingProducts = new ArrayList<>();
     private  ShopingCartListener shopingCartListener;
     private Button emptyShopingCart;
+    private String category;
     private static final String DATA_URL = "http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php";
     private static final String DATA_URL_DIST = "http://www.casbahdz.com/adm/CommandeDist/commande_dist_crud.php";//developed by IMAD
-    public CartBottomSheetDialog( ShopingCartListener shopingCartListener) {
+    public CartBottomSheetDialog( ShopingCartListener shopingCartListener,String category) {
         super();
         this.shopingCartListener = shopingCartListener;
-
+        this.category=category;
     }
 
-    public static CartBottomSheetDialog newInstance(ShopingCartListener shopingCartListener) {
-        return new CartBottomSheetDialog(shopingCartListener);
+    public static CartBottomSheetDialog newInstance(ShopingCartListener shopingCartListener,String category) {
+        return new CartBottomSheetDialog(shopingCartListener,category);
     }
     @NonNull
     @Override
@@ -135,7 +136,7 @@ public class CartBottomSheetDialog extends BottomSheetDialogFragment implements 
 
         cartRecyclerView = (RecyclerView)view.findViewById(R.id.cartRecyclerView);
 
-
+Log.e("category",category);
         cartRecyclerView.hasFixedSize();
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
@@ -169,8 +170,21 @@ public class CartBottomSheetDialog extends BottomSheetDialogFragment implements 
 
 
                 double prixTotal = 0;
-                for (Product pro : shopingProducts) {
-                    prixTotal = pro.getPrixVente()+prixTotal;
+
+                if(category.equals("grand")){
+
+                    for (Product pro : shopingProducts) {
+                        pro.setPrixVente(pro.getPrixVente()*1.19);
+                        prixTotal = pro.getPrixVente()+prixTotal;
+                    }
+
+
+                }else{
+
+                    for (Product pro : shopingProducts) {
+                        prixTotal = pro.getPrixVente()+prixTotal;
+                    }
+
                 }
                 dataBase.open();
                 final int id = dataBase.getID();

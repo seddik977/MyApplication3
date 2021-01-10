@@ -30,6 +30,8 @@ import com.casbaherpapp.myapplication.R;
 import com.casbaherpapp.myapplication.imad.Adapters.CardListAdapter;
 import com.casbaherpapp.myapplication.imad.BottomSheetDialog.CartBottomSheetDialog;
 import com.casbaherpapp.myapplication.imad.BottomSheetDialog.HistoryBottomSheetDialog;
+import com.casbaherpapp.myapplication.imad.BottomSheetDialog.InfoBottomSheetDialog;
+import com.casbaherpapp.myapplication.imad.BottomSheetDialog.PaiementBottomSheetDialog;
 import com.casbaherpapp.myapplication.imad.Dialog.FilterDialogFragment;
 import com.casbaherpapp.myapplication.imad.Entities.Product;
 import com.casbaherpapp.myapplication.imad.Listerners.ClickListener;
@@ -59,19 +61,23 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
      private  FilterDialogFragment filterDialogFragment;
         private  CartBottomSheetDialog cartBottomSheetDialog;
         private FragmentManager fm;
-        private String category;
+        private String category="petit";
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_products);
-        category="petit";
+
         prixTotal =(TextView) findViewById(R.id.tv_total);
         filterTitle=(TextView) findViewById(R.id.filterTitle);
         products = new ArrayList<Product>();
           recyclerView = findViewById(R.id.recycler_cart);
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(OrderProductsDistributeur.this));
-
+        dataBase = new BDD(OrderProductsDistributeur.this);
+        dataBase.open();
+        category = dataBase.getcategory();
+        dataBase.close();
+        get_produit_disponible();
         fm = getSupportFragmentManager();
         cartBottomSheetDialog =CartBottomSheetDialog.newInstance(new ShopingCartListener() {
             @Override
@@ -118,10 +124,9 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
                total  = cartBottomSheetDialog.getShopingCartAdapter().editerProduct(nbreFardeaux,nbrePalettes,id);
                prixTotal.setText(total + "DA");
             }
-        });
+        },category);
 
-        dataBase = new BDD(OrderProductsDistributeur.this);
-        get_produit_disponible();
+
 
         //fetch products from database and show it
 
@@ -243,6 +248,17 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
                 System.exit(0);
                 return true;
 
+            case R.id.action_payment:
+
+                PaiementBottomSheetDialog paiementBottomSheetDialog=PaiementBottomSheetDialog.newInstance();
+                paiementBottomSheetDialog.show(fm,"paiement");
+
+                return true;
+            case R.id.action_info:
+
+            InfoBottomSheetDialog infoBottomSheetDialog =InfoBottomSheetDialog.newInstance();
+            infoBottomSheetDialog.show(fm,"info");
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -419,7 +435,7 @@ switch (view.getId()) {
                                     prix_usine = response.getJSONObject(i).getDouble("prix_usine");
                                     quantite_u = response.getJSONObject(i).getInt("quantite_u");
                                     category = response.getJSONObject(i).getString("category");
-
+                                   Log.e("category",category);
                                     Product p = new Product(
                                          id,
                                            nom,
