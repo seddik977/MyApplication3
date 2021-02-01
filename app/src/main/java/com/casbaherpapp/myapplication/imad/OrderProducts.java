@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -59,13 +61,15 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
      private  FilterDialogFragment filterDialogFragment;
         private  CartBottomSheetDialog cartBottomSheetDialog;
         private FragmentManager fm;
+        private LinearLayout promotionDistLayout;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_products);
             category="petit";
         prixTotal =(TextView) findViewById(R.id.tv_total);
         filterTitle=(TextView) findViewById(R.id.filterTitle);
-
+        promotionDistLayout=(LinearLayout)findViewById(R.id.promotionDistLayout);
+        promotionDistLayout.setVisibility(View.GONE);
 
         products = new ArrayList<Product>();
           recyclerView = findViewById(R.id.recycler_cart);
@@ -81,10 +85,17 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void removeProductFromCart(int id,int position) {
-
+                NumberFormat nf = NumberFormat.getInstance();
                double prix =  cartBottomSheetDialog.getShopingProducts().get(position).getPrixVente();
                total = total - prix;
-                prixTotal.setText(String.valueOf(total)+"DA");
+               // prixTotal.setText(String.valueOf(total)+"DA");
+                total=(double)((int)(total*100))/100;
+                String Ttotal = nf.format(total);
+                Ttotal=Ttotal.replace(","," ");
+                prixTotal.setText(Ttotal+" DA");
+
+
+
                 cartBottomSheetDialog.removeProductFromCart(id,position);
                 adapter.showUpProduct(id);
                 cartItemCount = cartItemCount -1;
@@ -116,10 +127,20 @@ public class OrderProducts extends AppCompatActivity implements View.OnClickList
             @Override
             public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
 
+                NumberFormat nf = NumberFormat.getInstance();
                total  = cartBottomSheetDialog.getShopingCartAdapter().editerProduct(nbreFardeaux,nbrePalettes,id);
-               prixTotal.setText(total + "DA");
+              // prixTotal.setText(total + "DA");
+
+
+
+                total=(double)((int)(total*100))/100;
+                String Ttotal = nf.format(total);
+                Ttotal=Ttotal.replace(","," ");
+                prixTotal.setText(Ttotal+" DA");
+
+
             }
-        },category);
+        },category,"Livreur");
         dataBase = new BDD(OrderProducts.this);
         fetchDataFromDB(); //fetch products from database and show it
 
@@ -298,14 +319,18 @@ products.add(p);
             }, new ShopingCartListener() {
                 @Override
                 public void addProductToCart(Product product) {
-
+                    NumberFormat nf = NumberFormat.getInstance();
                 cartBottomSheetDialog.addProductToCart(product);
 
                     total = total + product.getPrixVente();
                     cartItemCount = cartItemCount +1;
                     textCartItemCount.setText(String.valueOf(cartItemCount));
-                    DecimalFormat df2 = new DecimalFormat("#.##");
-                    prixTotal.setText(df2.format(total) + "DA");
+                   // DecimalFormat df2 = new DecimalFormat("#.##");
+                    //prixTotal.setText(df2.format(total) + "DA");
+                    total=(double)((int)(total*100))/100;
+                    String Ttotal = nf.format(total);
+                    Ttotal=Ttotal.replace(","," ");
+                    prixTotal.setText(Ttotal+" DA");
                     setupBadge();
 
                 }
@@ -324,7 +349,7 @@ products.add(p);
                 public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
 
                 }
-            },category);
+            },category,"Livreur");
             recyclerView.setAdapter(adapter);
 
         }

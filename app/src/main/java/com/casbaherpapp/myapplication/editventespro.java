@@ -34,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -127,7 +128,14 @@ private int positionindex=-1;
 
         }
      TextView t=findViewById(R.id.totalp);
-        t.setText(total+" DA");
+       // t.setText(total+" DA");
+
+
+        NumberFormat nf = NumberFormat.getInstance();
+        total=(double)((int)(total*100))/100;
+        String Total__ = nf.format(total);
+        Total__=Total__.replace(","," ");
+        t.setText(Total__+" DA");
 
     }
 

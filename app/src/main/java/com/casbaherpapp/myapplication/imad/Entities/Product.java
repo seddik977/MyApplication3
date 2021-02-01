@@ -123,4 +123,6 @@ public class Product {
     public void setQuantiteUsine(int quantiteUsine) {
         this.quantiteUsine = quantiteUsine;
     }
+
+
 }

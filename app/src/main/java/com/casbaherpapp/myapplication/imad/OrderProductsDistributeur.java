@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 public class OrderProductsDistributeur extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     public TextView prixTotal;
@@ -57,11 +59,13 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
     private TextView textCartItemCount;
     private  int cartItemCount = 0 ;
     private TextView filterTitle;
+    private LinearLayout promotionDistLayout;
      private HistoryBottomSheetDialog  historyBottomSheetDialog ;
      private  FilterDialogFragment filterDialogFragment;
         private  CartBottomSheetDialog cartBottomSheetDialog;
         private FragmentManager fm;
         private String category="petit";
+        private String role;
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -76,7 +80,13 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
         dataBase = new BDD(OrderProductsDistributeur.this);
         dataBase.open();
         category = dataBase.getcategory();
+        role=dataBase.getrole();
         dataBase.close();
+
+        
+
+
+
         get_produit_disponible();
         fm = getSupportFragmentManager();
         cartBottomSheetDialog =CartBottomSheetDialog.newInstance(new ShopingCartListener() {
@@ -85,11 +95,14 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
             }
             @Override
             public void removeProductFromCart(int id,int position) {
-
                double prix =  cartBottomSheetDialog.getShopingProducts().get(position).getPrixVente();
                total = total - prix;
-
-                prixTotal.setText(String.valueOf(total)+"DA");
+                NumberFormat nf = NumberFormat.getInstance();
+                //prixTotal.setText(String.valueOf(total)+"DA");
+                total=(double)((int)(total*100))/100;
+                String Ttotal = nf.format(total);
+                Ttotal=Ttotal.replace(","," ");
+                prixTotal.setText(Ttotal+" DA");
                 cartBottomSheetDialog.removeProductFromCart(id,position);
                 adapter.showUpProduct(id);
                 cartItemCount = cartItemCount -1;
@@ -98,14 +111,10 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
                 if(cartItemCount==0){
                     cartBottomSheetDialog.getDialog().dismiss();
                 }
-
-
             }
-
             @Override
             public void removeAllProductFromCart() {
                 final  int size = cartBottomSheetDialog.getShopingProducts().size();
-
                 cartBottomSheetDialog.getShopingCartAdapter().getShopingProducts().clear();
                 cartBottomSheetDialog.getShopingCartAdapter().notifyItemRangeRemoved(0,size);
                 adapter.resetProductList();
@@ -114,17 +123,22 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
                 total = 0;
                 setupBadge();
                 cartBottomSheetDialog.getDialog().dismiss();
-
-
             }
 
             @Override
             public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
 
+                NumberFormat nf = NumberFormat.getInstance();
                total  = cartBottomSheetDialog.getShopingCartAdapter().editerProduct(nbreFardeaux,nbrePalettes,id);
-               prixTotal.setText(total + "DA");
+             //  prixTotal.setText(total + "DA");
+
+
+                total=(double)((int)(total*100))/100;
+                String Ttotal = nf.format(total);
+                Ttotal=Ttotal.replace(","," ");
+                prixTotal.setText(Ttotal+" DA");
             }
-        },category);
+        },category,role);
 
 
 
@@ -230,7 +244,7 @@ public class OrderProductsDistributeur extends AppCompatActivity implements View
 
                             }else{
 
-                        cartBottomSheetDialog.show(fm,"title");
+                        cartBottomSheetDialog.show(fm,"cart bottom sheet");
 
                     }
                     return true;
@@ -335,12 +349,18 @@ products.add(p);
                 public void addProductToCart(Product product) {
 
                 cartBottomSheetDialog.addProductToCart(product);
+                    NumberFormat nf = NumberFormat.getInstance();
 
                     total = total + product.getPrixVente();
                     cartItemCount = cartItemCount +1;
                     textCartItemCount.setText(String.valueOf(cartItemCount));
-                    DecimalFormat df2 = new DecimalFormat("#.##");
-                    prixTotal.setText(df2.format(total) + "DA");
+                   // DecimalFormat df2 = new DecimalFormat("#.##");
+                    //prixTotal.setText(df2.format(total) + "DA");
+
+                    total=(double)((int)(total*100))/100;
+                    String Ttotal = nf.format(total);
+                    Ttotal=Ttotal.replace(","," ");
+                    prixTotal.setText(Ttotal+" DA");
                     setupBadge();
 
                 }
@@ -359,7 +379,7 @@ products.add(p);
                 public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
 
                 }
-            },category);
+            },category,role);
             recyclerView.setAdapter(adapter);
 
         }
@@ -435,7 +455,7 @@ switch (view.getId()) {
                                     prix_usine = response.getJSONObject(i).getDouble("prix_usine");
                                     quantite_u = response.getJSONObject(i).getInt("quantite_u");
                                     category = response.getJSONObject(i).getString("category");
-                                   Log.e("category",category);
+
                                     Product p = new Product(
                                          id,
                                            nom,
@@ -495,7 +515,7 @@ switch (view.getId()) {
                                         public void editerProduct(int nbreFardeaux, int nbrePalettes,int id) {
 
                                         }
-                                    },category);
+                                    },category,role);
                                     recyclerView.setAdapter(adapter);
 
                                 }
@@ -521,7 +541,7 @@ switch (view.getId()) {
                     public void onError(ANError anError) {
 
 
-                        Log.e("imad",anError.getMessage());
+
 
 
                     }

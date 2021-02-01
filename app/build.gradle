@@ -7,8 +7,8 @@ android {
         applicationId "com.casbaherpapp.myapplication"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 75
-        versionName "1.7.0"
+        versionCode 77
+        versionName "1.7.2"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables{useSupportLibrary = true}

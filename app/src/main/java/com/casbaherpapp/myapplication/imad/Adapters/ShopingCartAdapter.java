@@ -12,12 +12,14 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.casbaherpapp.myapplication.BDD;
 import com.casbaherpapp.myapplication.R;
 import com.casbaherpapp.myapplication.imad.Dialog.DeleteProductWarnningDialog;
 import com.casbaherpapp.myapplication.imad.Dialog.EditeProductDialog;
 import com.casbaherpapp.myapplication.imad.Entities.Product;
 import com.casbaherpapp.myapplication.imad.Listerners.ClickListener;
 import com.casbaherpapp.myapplication.imad.Listerners.ShopingCartListener;
+import com.casbaherpapp.myapplication.imad.OrderProductsDistributeur;
 import com.casbaherpapp.myapplication.imad.Transformation.CropCircleTransformation;
 import com.casbaherpapp.myapplication.imad.Transformation.RoundedCornersTransformation;
 import com.squareup.picasso.Picasso;
@@ -35,16 +37,18 @@ public class ShopingCartAdapter extends RecyclerView.Adapter<ShopingCartAdapter.
     private  ShopingCartListener shopingCartListener;
     private Context context;
     private FragmentManager fm;
-
-  public ShopingCartAdapter(Context context,FragmentManager fm, ArrayList<Product> shopingProducts, ShopingCartListener shopingCartListener){
+    private BDD dataBase;
+    private String category;
+    private String role;
+  public ShopingCartAdapter(Context context,FragmentManager fm, ArrayList<Product> shopingProducts, ShopingCartListener shopingCartListener,String category,String role){
 this.shopingProducts = shopingProducts;
-      this.mInflater = LayoutInflater.from(context);
+this.mInflater = LayoutInflater.from(context);
 this.shopingCartListener=shopingCartListener;
 this.context = context;
 this.fm=fm;
-
+this.role=role;
+this.category=category;
   }
-
     public ShopingCartListener getShopingCartListener() {
         return shopingCartListener;
     }
@@ -180,23 +184,55 @@ this.fm=fm;
     }
     public double editerProduct(int nbreFardeaux, int nbrePalettes,int id){
         for (Product product:getShopingProducts()){
-            if(product.getId() == id){
-                int numberBouteille = nbreFardeaux* product.getFardeau() +nbrePalettes *product.getPalette()*product.getFardeau();
-                product.setNumberBouteille(numberBouteille);
-                product.setNumberDesFardeaux(nbreFardeaux);
-                product.setNumberDesPalettes(nbrePalettes);
+            if(product.getId() == id) {
+                if(role.equals("Distributeur") && category.
+                        equals("petit") && product.getFamille().equals("Sauces")){
+                    int numberBouteille=nbreFardeaux * product.getFardeau() + nbrePalettes * product.getPalette() * product.getFardeau();
 
-                double prix = numberBouteille *product.getPrix_usine();
-                DecimalFormat df2 = new DecimalFormat("#.##");
-                prix =Double.valueOf(df2.format(prix));
-                product.setPrixVente(prix);
-                notifyDataSetChanged();
+                    if(id==53 || (id >=29 && id <=33)){
+
+                        if(nbreFardeaux>=20 && nbrePalettes >=1){
+                            Log.e("message","reduction 20%");
+                            numberBouteille = (nbreFardeaux%20) * product.getFardeau() +nbrePalettes *product.getPalette() * product.getFardeau();
+                        }
+                    }else{
+
+                        if(nbreFardeaux>=25 && nbrePalettes >=1){
+                            Log.e("message"," reduction 25%");
+                            numberBouteille = (nbreFardeaux%25) * product.getFardeau() +nbrePalettes *product.getPalette() * product.getFardeau();
+
+                        }
+
+                    }
+
+                    double prix = numberBouteille * product.getPrix_usine();
+                    numberBouteille = nbreFardeaux * product.getFardeau() + nbrePalettes * product.getPalette() * product.getFardeau();
+                    product.setNumberBouteille(numberBouteille);
+                    product.setNumberDesFardeaux(nbreFardeaux);
+                    product.setNumberDesPalettes(nbrePalettes);
+
+                    DecimalFormat df2 = new DecimalFormat("#.##");
+                    prix = Double.valueOf(df2.format(prix));
+                    product.setPrixVente(prix);
+                    notifyDataSetChanged();
+                }else{
+                    int numberBouteille = nbreFardeaux * product.getFardeau() + nbrePalettes * product.getPalette() * product.getFardeau();
+                    product.setNumberBouteille(numberBouteille);
+                    product.setNumberDesFardeaux(nbreFardeaux);
+                    product.setNumberDesPalettes(nbrePalettes);
+                    double prix = numberBouteille * product.getPrix_usine();
+                    DecimalFormat df2 = new DecimalFormat("#.##");
+                    prix = Double.valueOf(df2.format(prix));
+                    product.setPrixVente(prix);
+                    notifyDataSetChanged();
+
+                }
 
 
             }
 
+            }
 
-        }
                 return getTotalPrice();
 
     }

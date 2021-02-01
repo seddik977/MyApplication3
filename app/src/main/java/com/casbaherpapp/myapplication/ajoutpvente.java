@@ -21,8 +21,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -77,7 +79,8 @@ public class ajoutpvente extends AppCompatActivity implements GoogleApiClient.Co
     private Adapter3 mAdapter1;
     private RecyclerView.LayoutManager mLayoutManager;
     private String[] nom, num, adresse, zone, ID, credit, montant, quantite, quantite_u, endomage, QV, QVU, produits, IDP, quantite_f;
-
+    private int telechargement = 0;
+    private Switch telechargementSwitch;
     private String b, payement, reste, typ;
     private Integer[] ind, ind1, select, selected;
     private Button ajout, supprimer, modifier, appel, liv;
@@ -113,6 +116,18 @@ public class ajoutpvente extends AppCompatActivity implements GoogleApiClient.Co
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ajoutpvente);
+        telechargementSwitch=(Switch)findViewById(R.id.telechargement);
+        telechargementSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    telechargement=1;
+                }else{
+                    telechargement=0;
+                }
+                Log.e("switch", String.valueOf(telechargement));
+            }
+        });
         bd = new BDD(ajoutpvente.this);
         progress = new ProgressDialog(this);
         progress.setTitle("Chargement");
@@ -131,7 +146,6 @@ public class ajoutpvente extends AppCompatActivity implements GoogleApiClient.Co
                         this,
                         R.layout.dropdown_menu_popup_item,
                         COUNTRIES);
-
         final AutoCompleteTextView editTextFilledExposedDropdown = findViewById(R.id.wilaya);
         editTextFilledExposedDropdown.setAdapter(adapter);
         editTextFilledExposedDropdown.setValidator(new AutoCompleteTextView.Validator() {
@@ -562,6 +576,7 @@ public class ajoutpvente extends AppCompatActivity implements GoogleApiClient.Co
                                                             .addBodyParameter("lat", lat)
                                                             .addBodyParameter("longg", longg)
                                                             .addBodyParameter("id_livreur", id + "")
+                                                            .addBodyParameter("telechargement", telechargement + "")
 
 
                                                             .setTag("test")
@@ -605,6 +620,7 @@ public class ajoutpvente extends AppCompatActivity implements GoogleApiClient.Co
                                                                 @Override
                                                                 public void onError(ANError anError) {
                                                                     ddinsertlong(longg, lat);
+                                                                    Log.e("erre",anError.getMessage());
                                                                     finish();
                                                                     progress.dismiss();
                                                                     ajout.setEnabled(true);

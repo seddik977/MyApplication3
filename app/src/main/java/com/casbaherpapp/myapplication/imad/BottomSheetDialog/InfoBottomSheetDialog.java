@@ -149,7 +149,17 @@ public class InfoBottomSheetDialog  extends BottomSheetDialogFragment implements
                     password.setText(pass_word);
                     phone.setText(phone_number);
                     credit.setText(money+" DA");
+
+
+
+
+
                     versement.setText(versemen+" DA");
+
+
+
+
+
                     createddate.setText(created_date);
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.casbaherpapp.myapplication.imad.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.casbaherpapp.myapplication.BDD;
 import com.casbaherpapp.myapplication.R;
 import com.casbaherpapp.myapplication.imad.Dialog.OrderProductDialog;
 import com.casbaherpapp.myapplication.imad.Entities.Product;
@@ -23,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -38,9 +41,10 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     private FragmentManager fm;
     private  OrderProductDialog orderProductDialog;
     private String category;
+    private String role;
     // data is passed into the constructor
     public CardListAdapter(Context context, FragmentManager fm, ArrayList<Product> products, TextView prix_total,
-                           ClickListener listener, ShopingCartListener shopingCartListener,String category) {
+                           ClickListener listener, ShopingCartListener shopingCartListener,String category,String role) {
         this.mInflater = LayoutInflater.from(context);
         this.fm=fm;
         this.listener = listener;
@@ -50,6 +54,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         this.backUpProducts = products;
         this.shopingCartListener = shopingCartListener;
         this.prix_total = prix_total;
+        this.role=role;
         backUpProducts = new ArrayList<>();
         backUpProducts.addAll(products);
     }
@@ -64,14 +69,21 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-
+        NumberFormat nf = NumberFormat.getInstance();
        Product p = products.get(position);
         holder.nomProduit.setText(p.getNom());
                 if(category.equals("petit")){
                     holder.ht.setVisibility(View.GONE);
 
                 }else{holder.ht.setVisibility(View.VISIBLE);}
-        holder.prix.setText(String.valueOf(p.getPrix_usine()+" DA"));
+        //holder.prix.setText(String.valueOf(p.getPrix_usine()+" DA"));
+
+        double GetPrixUsine= p.getPrix_usine();
+        GetPrixUsine=(double)((int)(GetPrixUsine*100))/100;
+        String Prix__Usine = nf.format(GetPrixUsine);
+        Prix__Usine=Prix__Usine.replace(","," ");
+        holder.prix.setText(Prix__Usine+" DA");
+
         holder.nombreF.setText(p.getFardeau()+"F");
         holder.nombreP.setText(p.getPalette()+"P");
         holder.familyProduit.setText(p.getFamille());
@@ -219,27 +231,74 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
 
                         @Override
                         public void editerProduct(int nbreFardeaux, int nbrePalettes, int id) {
+
                                                         for(int i=0;i<backUpProducts.size();i++) {
                                                             if (backUpProducts.get(i).getId() == productId) {
-                                                                int numberBouteille = nbreFardeaux * backUpProducts.get(i).getFardeau() +nbrePalettes * backUpProducts.get(i).getPalette() * backUpProducts.get(i).getFardeau();
-                                                                backUpProducts.get(i).setNumberBouteille(numberBouteille);
-                                                                backUpProducts.get(i).setNumberDesFardeaux(nbreFardeaux);
-                                                                backUpProducts.get(i).setNumberDesPalettes(nbrePalettes);
+                                                                if(role.equals("Distributeur") && category.
+                                                                        equals("petit") && backUpProducts.get(i).getFamille().equals("Sauces")){
 
-                                                                double prix = numberBouteille * backUpProducts.get(i).getPrix_usine();
-                                                                DecimalFormat df2 = new DecimalFormat("#.##");
+                                                                    int numberBouteille=0;
+                                                                    double prix = 0.0;
+                                                                    if(productId==53 | productId >=29 && productId <=33){
+                                                                        Log.e("famille 20%", backUpProducts.get(i).getNom());
+                                                                        if(nbreFardeaux>=20 && nbrePalettes >=1){
+
+                                                                            numberBouteille = (nbreFardeaux%20) * backUpProducts.get(i).getFardeau() +nbrePalettes * backUpProducts.get(i).getPalette() * backUpProducts.get(i).getFardeau();
+                                                                            prix = numberBouteille * backUpProducts.get(i).getPrix_usine();
+                                                                        }
+                                                                    }else{
+                                                                        Log.e("famille 25%", backUpProducts.get(i).getNom());
+                                                                        if(nbreFardeaux>=25 && nbrePalettes >=1){
+
+                                                                            numberBouteille = (nbreFardeaux%25) * backUpProducts.get(i).getFardeau() +nbrePalettes * backUpProducts.get(i).getPalette() * backUpProducts.get(i).getFardeau();
+                                                                            prix = numberBouteille * backUpProducts.get(i).getPrix_usine();
+                                                                        }
+
+                                                                    }
+                                                                    numberBouteille = nbreFardeaux * backUpProducts.get(i).getFardeau() +nbrePalettes * backUpProducts.get(i).getPalette() * backUpProducts.get(i).getFardeau();
+                                                                    backUpProducts.get(i).setNumberBouteille(numberBouteille);
+                                                                    backUpProducts.get(i).setNumberDesFardeaux(nbreFardeaux);
+                                                                    backUpProducts.get(i).setNumberDesPalettes(nbrePalettes);
+
+
+
+
+                                                                    DecimalFormat df2 = new DecimalFormat("#.##");
 //                                                                prix = Double.valueOf(df2.format(prix));
-                                                                if (prix != 0) {
-                                                                    backUpProducts.get(i).setPrixVente(prix);
-                                                                    backUpProducts.get(i).setSelected(true);
+                                                                    if (prix != 0) {
+                                                                        backUpProducts.get(i).setPrixVente(prix);
+                                                                        backUpProducts.get(i).setSelected(true);
 
-                                                                    orderProductDialog.dismiss();
+                                                                        orderProductDialog.dismiss();
 
 
-                                                                    shopingCartListener.addProductToCart(backUpProducts.get(i));
-                                                                    notifyDataSetChanged();
+                                                                        shopingCartListener.addProductToCart(backUpProducts.get(i));
+                                                                        notifyDataSetChanged();
+
+                                                                    }
+                                                                }else{
+                                                                    int numberBouteille = nbreFardeaux * backUpProducts.get(i).getFardeau() +nbrePalettes * backUpProducts.get(i).getPalette() * backUpProducts.get(i).getFardeau();
+                                                                    backUpProducts.get(i).setNumberBouteille(numberBouteille);
+                                                                    backUpProducts.get(i).setNumberDesFardeaux(nbreFardeaux);
+                                                                    backUpProducts.get(i).setNumberDesPalettes(nbrePalettes);
+
+                                                                    double prix = numberBouteille * backUpProducts.get(i).getPrix_usine();
+                                                                    DecimalFormat df2 = new DecimalFormat("#.##");
+//                                                                prix = Double.valueOf(df2.format(prix));
+                                                                    if (prix != 0) {
+                                                                        backUpProducts.get(i).setPrixVente(prix);
+                                                                        backUpProducts.get(i).setSelected(true);
+
+                                                                        orderProductDialog.dismiss();
+
+
+                                                                        shopingCartListener.addProductToCart(backUpProducts.get(i));
+                                                                        notifyDataSetChanged();
+
+                                                                    }
 
                                                                 }
+
 
                                                             }
                                                         }
@@ -247,7 +306,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
                         }
 
                     });
-                    orderProductDialog.show(getFm(),"titl");
+                    orderProductDialog.show(getFm(),"title");
 
                     break;
 

@@ -52,25 +52,24 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CartBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener , View.OnLongClickListener{
     private BDD dataBase;
    private Button retourBtn;
-
    private RecyclerView cartRecyclerView;
    private ShopingCartAdapter shopingCartAdapter;
    private Button orderButton;
-
    private ArrayList<Product> shopingProducts = new ArrayList<>();
     private  ShopingCartListener shopingCartListener;
     private Button emptyShopingCart;
     private String category;
+    private String role;
     private static final String DATA_URL = "http://www.casbahdz.com/adm/CommandeLivreur/commande_livreur_crud.php";
     private static final String DATA_URL_DIST = "http://www.casbahdz.com/adm/CommandeDist/commande_dist_crud.php";//developed by IMAD
-    public CartBottomSheetDialog( ShopingCartListener shopingCartListener,String category) {
+    public CartBottomSheetDialog( ShopingCartListener shopingCartListener,String category,String role) {
         super();
         this.shopingCartListener = shopingCartListener;
         this.category=category;
+        this.role=role;
     }
-
-    public static CartBottomSheetDialog newInstance(ShopingCartListener shopingCartListener,String category) {
-        return new CartBottomSheetDialog(shopingCartListener,category);
+    public static CartBottomSheetDialog newInstance(ShopingCartListener shopingCartListener,String category,String role) {
+        return new CartBottomSheetDialog(shopingCartListener,category,role);
     }
     @NonNull
     @Override
@@ -83,13 +82,11 @@ public class CartBottomSheetDialog extends BottomSheetDialogFragment implements 
             }
         });
         return  dialog;
-
     }
     private void setupFullHeight(BottomSheetDialog bottomSheetDialog) {
         FrameLayout bottomSheet = (FrameLayout) bottomSheetDialog.findViewById(R.id.design_bottom_sheet);
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
         ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
-
         int windowHeight = getWindowHeight();
         if (layoutParams != null) {
             layoutParams.height = windowHeight;
@@ -97,14 +94,12 @@ public class CartBottomSheetDialog extends BottomSheetDialogFragment implements 
         bottomSheet.setLayoutParams(layoutParams);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataBase = new BDD(getActivity());
-        shopingCartAdapter =new ShopingCartAdapter(getContext(),getActivity().getSupportFragmentManager(),shopingProducts,shopingCartListener);
+        shopingCartAdapter =new ShopingCartAdapter(getContext(),getActivity().getSupportFragmentManager(),shopingProducts,shopingCartListener,category,role);
     }
-
     private int getWindowHeight() {
         // Calculate window height for fullscreen use
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -115,7 +110,6 @@ public class CartBottomSheetDialog extends BottomSheetDialogFragment implements 
     public void dismiss() {
         super.dismiss();
     }
-
     @Override
     public void dismissAllowingStateLoss() {
         super.dismissAllowingStateLoss();
@@ -145,9 +139,6 @@ Log.e("category",category);
 
         cartRecyclerView.addItemDecoration(dividerItemDecoration);
         cartRecyclerView.setLayoutManager(layoutManager);
-
-
-
         cartRecyclerView.setAdapter(shopingCartAdapter);
         retourBtn =(Button)view.findViewById(R.id.retour);
         orderButton =(Button) view.findViewById(R.id.orderButton);
@@ -167,9 +158,11 @@ Log.e("category",category);
                 getDialog().dismiss();
                 break;
             case R.id.orderButton:
-
-
                 double prixTotal = 0;
+                dataBase.open();
+                final int id = dataBase.getID();
+                final String role =dataBase.getrole();
+                dataBase.close();
 
                 if(category.equals("grand")){
 
@@ -177,19 +170,31 @@ Log.e("category",category);
                         pro.setPrixVente(pro.getPrixVente()*1.19);
                         prixTotal = pro.getPrixVente()+prixTotal;
                     }
-
-
                 }else{
 
-                    for (Product pro : shopingProducts) {
-                        prixTotal = pro.getPrixVente()+prixTotal;
-                    }
+
+
+if(role.equals("Distributeur")){
+
+
+
+    for (Product pro : shopingProducts) {
+
+        prixTotal = pro.getPrixVente()+prixTotal;
+    }
+    Log.e("total", String.valueOf(prixTotal));
+}else{
+
+    for (Product pro : shopingProducts) {
+        prixTotal = pro.getPrixVente()+prixTotal;
+    }
+
+}
+
+
 
                 }
-                dataBase.open();
-                final int id = dataBase.getID();
-                final String role =dataBase.getrole();
-                dataBase.close();
+
                 final MaterialAlertDialogBuilder builder =new MaterialAlertDialogBuilder(getActivity(),R.style.AlertDialogTheme);
                 final double finalPrixTotal = prixTotal;
                 builder
@@ -203,6 +208,7 @@ Log.e("category",category);
 
                                     getDialog().dismiss();
 
+
                             }
                         }).setPositiveButton("Commandez quand même", new DialogInterface.OnClickListener() {
                     @Override
@@ -210,67 +216,68 @@ Log.e("category",category);
 
 
 if(role.equals("Distributeur")){
-    AndroidNetworking.post(DATA_URL_DIST).addBodyParameter("action", "1").
-            addBodyParameter("totalPrix", String.valueOf(finalPrixTotal)).
-            addBodyParameter("idDist", String.valueOf(id)).
-            setTag("test")
-            .setPriority(Priority.MEDIUM)
-            .build()
-            .getAsParsed(new TypeToken<Integer>() {
-            }, new ParsedRequestListener<Integer>() {
 
-                @Override
-                public void onResponse(Integer idCommande) {
-
-                    for (Product pro : shopingProducts) {
-                        int a = 0;
-                        AndroidNetworking.post(DATA_URL_DIST).addBodyParameter("action", "2").
-                                addBodyParameter("idCommande", String.valueOf(idCommande)).
-                                addBodyParameter("idProduit", String.valueOf(pro.getId())).
-                                addBodyParameter("prixVente", String.valueOf(pro.getPrixVente())).
-                                addBodyParameter("nombreFardeaux", String.valueOf(pro.getNumberDesFardeaux())).
-                                addBodyParameter("nombrePalettes", String.valueOf(pro.getNumberDesPalettes())).
-                                setTag("test")
-                                .setPriority(Priority.MEDIUM)
-                                .build().getAsJSONArray(new JSONArrayRequestListener() {
-                            @Override
-                            public void onResponse(JSONArray response) {
-                                Log.e("sucess", String.valueOf(response.length()));
-                            }
-
-                            @Override
-                            public void onError(ANError anError) {
-                                Log.e("error", anError.getMessage());
-
-                            }
-                        });
-                        Context context = getContext();
-                        CharSequence text = "Envoi en cours!";
-                        int duration = Toast.LENGTH_SHORT;
-
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-
-                        getDialog().dismiss();
-
-
-
-
-
-
-                    }
-
-
-                    DeliverySuccessDialog deliverySuccessDialog =DeliverySuccessDialog.newInstance("title",shopingCartListener);
-                    deliverySuccessDialog.show(getFragmentManager(),"title");
-                    shopingCartListener.removeAllProductFromCart();
-                }
-
-                @Override
-                public void onError(ANError anError) {
-
-                }
-            });
+//    AndroidNetworking.post(DATA_URL_DIST).addBodyParameter("action", "1").
+//            addBodyParameter("totalPrix", String.valueOf(finalPrixTotal)).
+//            addBodyParameter("idDist", String.valueOf(id)).
+//            setTag("test")
+//            .setPriority(Priority.MEDIUM)
+//            .build()
+//            .getAsParsed(new TypeToken<Integer>() {
+//            }, new ParsedRequestListener<Integer>() {
+//
+//                @Override
+//                public void onResponse(Integer idCommande) {
+//
+//                    for (Product pro : shopingProducts) {
+//                        int a = 0;
+//                        AndroidNetworking.post(DATA_URL_DIST).addBodyParameter("action", "2").
+//                                addBodyParameter("idCommande", String.valueOf(idCommande)).
+//                                addBodyParameter("idProduit", String.valueOf(pro.getId())).
+//                                addBodyParameter("prixVente", String.valueOf(pro.getPrixVente())).
+//                                addBodyParameter("nombreFardeaux", String.valueOf(pro.getNumberDesFardeaux())).
+//                                addBodyParameter("nombrePalettes", String.valueOf(pro.getNumberDesPalettes())).
+//                                setTag("test")
+//                                .setPriority(Priority.MEDIUM)
+//                                .build().getAsJSONArray(new JSONArrayRequestListener() {
+//                            @Override
+//                            public void onResponse(JSONArray response) {
+//                                Log.e("sucess", String.valueOf(response.length()));
+//                            }
+//
+//                            @Override
+//                            public void onError(ANError anError) {
+//                                Log.e("error", anError.getMessage());
+//
+//                            }
+//                        });
+//                        Context context = getContext();
+//                        CharSequence text = "Envoi en cours!";
+//                        int duration = Toast.LENGTH_SHORT;
+//
+//                        Toast toast = Toast.makeText(context, text, duration);
+//                        toast.show();
+//
+//                        getDialog().dismiss();
+//
+//
+//
+//
+//
+//
+//                    }
+//
+//
+//                    DeliverySuccessDialog deliverySuccessDialog =DeliverySuccessDialog.newInstance("title",shopingCartListener);
+//                    deliverySuccessDialog.show(getFragmentManager(),"title");
+//                    shopingCartListener.removeAllProductFromCart();
+//                }
+//
+//                @Override
+//                public void onError(ANError anError) {
+//
+//                }
+//            });
 
 
 
@@ -321,10 +328,6 @@ if(role.equals("Livreur")){
                         toast.show();
 
                         getDialog().dismiss();
-
-
-
-
 
 
                     }

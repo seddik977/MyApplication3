@@ -6,35 +6,73 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
-        android:id="@+id/layout_total"
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:padding="5dp"
-        android:weightSum="2">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/filterTitle"
+        <LinearLayout
+            android:id="@+id/layout_total"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="start|end"
-            android:text="Tous"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"></TextView>
+            android:background="@color/colorPrimary"
+            android:padding="5dp"
+            android:weightSum="2">
 
-        <TextView
-            android:id="@+id/tv_total"
+            <TextView
+                android:id="@+id/filterTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="start|end"
+                android:text="Tous"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:id="@+id/tv_total"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="0 DA"
+                android:textColor="#f44336"
+                android:textSize="24sp"
+                android:textStyle="bold"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/promotionDistLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="0 DA"
-            android:textColor="#f44336"
-            android:textSize="24sp"
-            android:textStyle="bold"></TextView>
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView30"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/rancho"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="20 fardeaux offerts pour 1 palette Vinaigre, Mayonnaise "
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/textView31"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/rancho"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text=" 25 fardeaux offerts pour 1 palette BBQ, Ketchup, Moutarde, Hrissa"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -42,7 +80,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_cart"
 
-        android:layout_below="@+id/layout_total"
+        android:layout_below="@+id/headerLayout"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 

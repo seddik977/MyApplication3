@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import java.text.NumberFormat;
 public class DetailsVersementDialog extends DialogFragment implements  View.OnClickListener{
   private Button closeBtn;
   private TextView infocomptable;
@@ -32,18 +33,14 @@ public class DetailsVersementDialog extends DialogFragment implements  View.OnCl
   private TextView evenement;
   private  TextView date;
  private  VersementItem versementItem;
-
   public DetailsVersementDialog(VersementItem versementItem){
       this.versementItem = versementItem;
   }
     public static DetailsVersementDialog newInstance(String title, VersementItem versementItem){
     DetailsVersementDialog detailsVersementDialog =new DetailsVersementDialog(versementItem);
-
         Bundle args = new Bundle();
         args.putString("title", title);
-
         return  detailsVersementDialog;
-
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +73,9 @@ public class DetailsVersementDialog extends DialogFragment implements  View.OnCl
     }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        NumberFormat nf = NumberFormat.getInstance();
+
+
         super.onViewCreated(view, savedInstanceState);
         infocomptable = (TextView)view.findViewById(R.id.infocomptable);
         ancientcredit =(TextView)view.findViewById(R.id.ancientcredit);
@@ -87,10 +87,49 @@ public class DetailsVersementDialog extends DialogFragment implements  View.OnCl
         closeBtn  = (Button)view.findViewById(R.id.fermer);
         closeBtn.setOnClickListener(this);
         infocomptable.setText(versementItem.getComptableFirstName()+" "+versementItem.getComptableLastName());
-        ancientcredit.setText(versementItem.getAncientCredit()+" DA");
-        noveaucredit.setText(versementItem.getNoveauCredit()+" DA");
-        derniermontant.setText(versementItem.getDernierVersement()+" DA");
-        montanttotal.setText(versementItem.getVersementTotal()+" DA");
+       // ancientcredit.setText(versementItem.getAncientCredit()+" DA");
+
+        double AncienCredit= versementItem.getAncientCredit();
+        AncienCredit=(double)((int)(AncienCredit*100))/100;
+        String AncienC = nf.format(AncienCredit);
+        AncienC=AncienC.replace(","," ");
+        ancientcredit.setText(AncienC+" DA");
+
+
+        //noveaucredit.setText(versementItem.getNoveauCredit()+" DA");
+
+
+        double NoveauCredit= versementItem.getNoveauCredit();
+        NoveauCredit=(double)((int)(NoveauCredit*100))/100;
+        String NouveauC = nf.format(NoveauCredit);
+        NouveauC=NouveauC.replace(","," ");
+        noveaucredit.setText(NouveauC+" DA");
+
+
+
+       // derniermontant.setText(versementItem.getDernierVersement()+" DA");
+
+        double DernierVersement= versementItem.getDernierVersement();
+        DernierVersement=(double)((int)(DernierVersement*100))/100;
+        String DernierV = nf.format(DernierVersement);
+        DernierV=DernierV.replace(","," ");
+        derniermontant.setText(DernierV+" DA");
+
+
+
+
+        //montanttotal.setText(versementItem.getVersementTotal()+" DA");
+
+        double VersementTotal= versementItem.getVersementTotal();
+        VersementTotal=(double)((int)(VersementTotal*100))/100;
+        String VersementT= nf.format(DernierVersement);
+        VersementT=VersementT.replace(","," ");
+        montanttotal.setText(VersementT+" DA");
+
+
+
+
+
         if(versementItem.getAction().equals("versement")){
             evenement.setText("Versement de credit");
         }else{
